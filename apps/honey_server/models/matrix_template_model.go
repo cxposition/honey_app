@@ -10,6 +10,6 @@ type MatrixTemplateModel struct {
 
 type HostTemplateList []HostTemplateInfo
 type HostTemplateInfo struct {
-	Port      int  `json:"port"`
-	ServiceID uint `json:"serviceID"`
+	HostTemplateID uint `json:"hostTemplateID"`
+	Weight         int  `json:"weight"`
 }

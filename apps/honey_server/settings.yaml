@@ -1,0 +1,5 @@
+db:
+  db_name: "honey_db"
+  host: "111.111.111.133"
+  username: "root"
+  password: "123456"

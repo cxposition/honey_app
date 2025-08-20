@@ -4,12 +4,12 @@ import "gorm.io/gorm"
 
 type HostTemplateModel struct {
 	gorm.Model
-	Title            string           `gorm:"32" json:"title"`
-	HostTemplateList HostTemplateList `json:"hostTemplateList"` // 主机模版列表
+	Title    string               `gorm:"size:32" json:"title"`
+	PortList HostTemplatePortList `gorm:"serializer:json" json:"portList"` // 主机模版列表
 }
 
 type HostTemplatePortList []HostTemplatePort
 type HostTemplatePort struct {
-	HostTemplateID uint `json:"hostTemplateID"`
-	Weight         int  `json:"weight"`
+	Port      int  `json:"port"`
+	ServiceID uint `json:"serviceID"`
 }
