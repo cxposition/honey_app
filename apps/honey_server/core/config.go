@@ -4,13 +4,14 @@ import (
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
 	"honey_app/apps/honey_server/config"
+	"honey_app/apps/honey_server/flags"
 	"os"
 )
 
 func ReadConfig() *config.Config {
-	byteData, err := os.ReadFile("settings.yaml")
+	byteData, err := os.ReadFile(flags.Options.File)
 	if err != nil {
-		logrus.Fatal("配置文件读取错误 %s", err)
+		logrus.Fatalf("配置文件读取错误 %s", err)
 		return nil
 	}
 

@@ -3,7 +3,8 @@ package config
 import "fmt"
 
 type Config struct {
-	DB DB `yaml:"db"`
+	DB     DB     `yaml:"db"`
+	Logger Logger `yaml:"logger"`
 }
 
 type DB struct {
@@ -22,4 +23,10 @@ func (db *DB) DSN() string {
 		db.Port,
 		db.DbName,
 	)
+}
+
+type Logger struct {
+	Format  string `yaml:"format"`
+	Level   string `yaml:"level"`
+	AppName string `yaml:"appName"`
 }

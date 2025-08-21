@@ -1,14 +1,20 @@
 package core
 
 import (
+	"fmt"
 	"github.com/sirupsen/logrus"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"honey_app/apps/honey_server/global"
+	"sync"
 	"time"
 )
 
+var db *gorm.DB
+var once sync.Once
+
 func InitDB() (database *gorm.DB) {
+	fmt.Println("数据库初始化了")
 	dsn := global.Config.DB.DSN()
 	dialector := mysql.Open(dsn)
 	database, err := gorm.Open(dialector, &gorm.Config{
@@ -35,4 +41,11 @@ func InitDB() (database *gorm.DB) {
 	sqlDB.SetConnMaxLifetime(time.Hour)
 	logrus.Infof("数据库连接成功")
 	return
+}
+
+func GetDB() *gorm.DB {
+	once.Do(func() {
+		db = InitDB()
+	})
+	return db
 }

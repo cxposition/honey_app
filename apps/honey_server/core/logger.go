@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/sirupsen/logrus"
+	"honey_app/apps/honey_server/global"
 	"os"
 	"path"
 	"sync"
@@ -64,7 +65,7 @@ func (hook *MyHook) Fire(entry *logrus.Entry) error {
 	hook.mu.Lock()
 	defer hook.mu.Unlock()
 
-	timer := entry.Time.Format("2006-01-02")
+	timer := entry.Time.Format(time.DateOnly)
 	line, err := entry.String()
 	if err != nil {
 		return fmt.Errorf("failed to format log entry: %v", err)
@@ -132,9 +133,20 @@ func (hook *MyHook) Levels() []logrus.Level {
 
 func GetLogger() *logrus.Entry {
 	logger := logrus.New()
-	logger.SetLevel(logrus.InfoLevel)
+	l := global.Config.Logger
+	level, err := logrus.ParseLevel(l.Level)
+	if err != nil {
+		logrus.Warnf("日志级别配置错误,自动修改为info")
+		level = logrus.InfoLevel
+	}
+	logger.SetLevel(level)
 	logger.AddHook(&MyHook{logPath: "logs"})
-	logger.SetFormatter(&MyLog{})
+	if l.Format == "json" {
+		logger.SetFormatter(&logrus.JSONFormatter{TimestampFormat: time.DateTime})
+	} else {
+		logrus.SetFormatter(&MyLog{})
+	}
+
 	logger.SetReportCaller(true)
 	return logger.WithField("appName", "xxx")
 }
