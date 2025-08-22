@@ -1,7 +1,6 @@
 package core
 
 import (
-	"fmt"
 	"github.com/sirupsen/logrus"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -11,11 +10,11 @@ import (
 )
 
 var db *gorm.DB
-var once sync.Once
+var dbOnce sync.Once
 
 func InitDB() (database *gorm.DB) {
-	fmt.Println("数据库初始化了")
-	dsn := global.Config.DB.DSN()
+	cfg := global.Config.DB
+	dsn := cfg.DSN()
 	dialector := mysql.Open(dsn)
 	database, err := gorm.Open(dialector, &gorm.Config{
 		DisableForeignKeyConstraintWhenMigrating: true, // 不生成实体外键
@@ -36,15 +35,31 @@ func InitDB() (database *gorm.DB) {
 		return
 	}
 	// 设置连接池
-	sqlDB.SetMaxIdleConns(10)
-	sqlDB.SetMaxOpenConns(100)
-	sqlDB.SetConnMaxLifetime(time.Hour)
-	logrus.Infof("数据库连接成功")
+	var maxIdleConns, maxOpenConns, connMaxLifetime int
+	if cfg.MaxIdleConns == 0 {
+		maxIdleConns = 10
+	} else {
+		maxIdleConns = cfg.MaxIdleConns
+	}
+	if cfg.MaxOpenConns == 0 {
+		maxOpenConns = 100
+	} else {
+		maxOpenConns = cfg.MaxOpenConns
+	}
+	if cfg.ConnMaxLifeTime == 0 {
+		connMaxLifetime = 10000
+	} else {
+		connMaxLifetime = cfg.ConnMaxLifeTime
+	}
+	sqlDB.SetMaxIdleConns(maxIdleConns)
+	sqlDB.SetMaxOpenConns(maxOpenConns)
+	sqlDB.SetConnMaxLifetime(time.Duration(connMaxLifetime) * time.Second)
+	logrus.Infof("mysql连接成功")
 	return
 }
 
 func GetDB() *gorm.DB {
-	once.Do(func() {
+	dbOnce.Do(func() {
 		db = InitDB()
 	})
 	return db

@@ -10,10 +10,6 @@ func main() {
 	global.Config = core.ReadConfig()
 	global.Log = core.GetLogger()
 	global.DB = core.GetDB()
+	global.Redis = core.GetRedis()
 	flags.Run()
-	global.Log.Infof("info日志")
-	global.Log.Warnf("warn日志")
-	global.Log.Errorf("error日志")
-	core.GetDB()
-	core.GetDB()
 }

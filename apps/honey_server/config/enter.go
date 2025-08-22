@@ -5,14 +5,18 @@ import "fmt"
 type Config struct {
 	DB     DB     `yaml:"db"`
 	Logger Logger `yaml:"logger"`
+	Redis  Redis  `yaml:"redis"`
 }
 
 type DB struct {
-	DbName   string `yaml:"db_name"`
-	Host     string `yaml:"host"`
-	Port     int    `yaml:"port"`
-	User     string `yaml:"user"`
-	Password string `yaml:"password"`
+	DbName          string `yaml:"db_name"`
+	Host            string `yaml:"host"`
+	Port            int    `yaml:"port"`
+	User            string `yaml:"user"`
+	Password        string `yaml:"password"`
+	MaxIdleConns    int    `yaml:"maxIdleConns"`
+	MaxOpenConns    int    `yaml:"maxOpenConns"`
+	ConnMaxLifeTime int    `yaml:"connMaxLifeTime"`
 }
 
 func (db *DB) DSN() string {
@@ -29,4 +33,10 @@ type Logger struct {
 	Format  string `yaml:"format"`
 	Level   string `yaml:"level"`
 	AppName string `yaml:"appName"`
+}
+
+type Redis struct {
+	Addr     string `yaml:"addr"`
+	Password string `yaml:"password"`
+	DB       int    `yaml:"db"`
 }

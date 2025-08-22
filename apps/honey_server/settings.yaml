@@ -4,7 +4,14 @@ db:
   port: 3306
   user: "root"
   password: "123456"
+  maxIdleConns: 2
+  maxOpenConns: 100
+  connMaxLifeTime: 10000
 logger:
   format: json
   appName: honey_server
-  level: error
+  level: info
+redis:
+  addr: "111.111.111.133:6379"
+  password: "123456"
+  db: 0
