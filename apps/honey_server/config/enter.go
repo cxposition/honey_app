@@ -6,6 +6,7 @@ type Config struct {
 	DB     DB     `yaml:"db"`
 	Logger Logger `yaml:"logger"`
 	Redis  Redis  `yaml:"redis"`
+	System System `yaml:"system"`
 }
 
 type DB struct {
@@ -39,4 +40,8 @@ type Redis struct {
 	Addr     string `yaml:"addr"`
 	Password string `yaml:"password"`
 	DB       int    `yaml:"db"`
+}
+
+type System struct {
+	WebAddr string `yaml:"webAddr"`
 }

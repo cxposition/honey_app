@@ -13,5 +13,7 @@ logger:
   level: info
 redis:
   addr: "111.111.111.133:6379"
-  password: "123456"
-  db: 0
+  password:
+  db: 1
+system:
+  webAddr: "127.0.0.1:8089"  # web的运行地址

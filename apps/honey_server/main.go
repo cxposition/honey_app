@@ -4,6 +4,7 @@ import (
 	"honey_app/apps/honey_server/core"
 	"honey_app/apps/honey_server/flags"
 	"honey_app/apps/honey_server/global"
+	"honey_app/apps/honey_server/routers"
 )
 
 func main() {
@@ -12,4 +13,5 @@ func main() {
 	global.DB = core.GetDB()
 	global.Redis = core.GetRedis()
 	flags.Run()
+	routers.Run()
 }
