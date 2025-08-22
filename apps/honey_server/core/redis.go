@@ -28,8 +28,8 @@ func InitRedis() (client *redis.Client) {
 	return rdb
 }
 
+// GetRedis 这有个坑,这个once被mysql用掉了，所以要新建一个once
 func GetRedis() *redis.Client {
-	// 这有个坑,这个once被mysql用掉了，所以要新建一个once
 	rdbOnce.Do(func() {
 		rdb = InitRedis()
 	})
