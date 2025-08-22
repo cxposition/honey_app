@@ -17,3 +17,7 @@ redis:
   db: 1
 system:
   webAddr: "127.0.0.1:8089"  # web的运行地址
+jwt:
+  Expires: 8640000
+  Issuer: chenxia
+  Secret: chenx@qq.com

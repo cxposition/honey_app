@@ -7,6 +7,7 @@ type Config struct {
 	Logger Logger `yaml:"logger"`
 	Redis  Redis  `yaml:"redis"`
 	System System `yaml:"system"`
+	Jwt    Jwt    `yaml:"jwt"`
 }
 
 type DB struct {
@@ -44,4 +45,9 @@ type Redis struct {
 
 type System struct {
 	WebAddr string `yaml:"webAddr"`
+}
+type Jwt struct {
+	Expires int    `yaml:"expires"` // 单位为秒
+	Issuer  string `yaml:"issuer"`
+	Secret  string `yaml:"secret"`
 }
