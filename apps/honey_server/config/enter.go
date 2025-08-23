@@ -3,11 +3,12 @@ package config
 import "fmt"
 
 type Config struct {
-	DB     DB     `yaml:"db"`
-	Logger Logger `yaml:"logger"`
-	Redis  Redis  `yaml:"redis"`
-	System System `yaml:"system"`
-	Jwt    Jwt    `yaml:"jwt"`
+	DB        DB       `yaml:"db"`
+	Logger    Logger   `yaml:"logger"`
+	Redis     Redis    `yaml:"redis"`
+	System    System   `yaml:"system"`
+	Jwt       Jwt      `yaml:"jwt"`
+	WhiteList []string `yaml:"whiteList"`
 }
 
 type DB struct {

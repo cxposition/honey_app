@@ -3,6 +3,7 @@ package jwts
 
 import (
 	"errors"
+	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"honey_app/apps/honey_server/global"
 	"time"
@@ -21,14 +22,15 @@ type Claims struct {
 // GetToken 生成token
 func GetToken(info ClaimsUserInfo) (string, error) {
 	j := global.Config.Jwt
-	cla := Claims{
+	fmt.Printf("J:%+v", j)
+	claims := Claims{
 		ClaimsUserInfo: info,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Duration(j.Expires) * time.Second).Unix(), // 过期时间
 			Issuer:    j.Issuer,                                                      // 签发人
 		},
 	}
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, cla)
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString([]byte(j.Secret)) // 进行签名生成对应的token
 }
 
