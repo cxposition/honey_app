@@ -3,7 +3,6 @@ package jwts
 
 import (
 	"errors"
-	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"honey_app/apps/honey_server/global"
 	"time"
@@ -22,7 +21,6 @@ type Claims struct {
 // GetToken 生成token
 func GetToken(info ClaimsUserInfo) (string, error) {
 	j := global.Config.Jwt
-	fmt.Printf("J:%+v", j)
 	claims := Claims{
 		ClaimsUserInfo: info,
 		StandardClaims: jwt.StandardClaims{
