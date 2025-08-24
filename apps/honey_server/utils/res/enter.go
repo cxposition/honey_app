@@ -1,6 +1,9 @@
 package res
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+	"honey_app/apps/honey_server/utils/validate"
+)
 
 type Response struct {
 	Code int    `json:"code"`
@@ -41,5 +44,6 @@ func FailWithMsg(msg string, c *gin.Context) {
 }
 
 func FailWithError(err error, c *gin.Context) {
-	response(1001, nil, err.Error(), c)
+	errMsg := validate.ValidateError(err)
+	response(1001, nil, errMsg, c)
 }

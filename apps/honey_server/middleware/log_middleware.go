@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"github.com/gin-gonic/gin"
-	uuid "github.com/google/uuid"
+	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 	"honey_app/apps/honey_server/global"
 )
