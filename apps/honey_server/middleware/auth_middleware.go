@@ -7,6 +7,7 @@ import (
 	"honey_app/apps/honey_server/global"
 	"honey_app/apps/honey_server/utils"
 	"honey_app/apps/honey_server/utils/jwts"
+	"honey_app/apps/honey_server/utils/res"
 )
 
 func AuthMiddleware(c *gin.Context) {
@@ -22,7 +23,7 @@ func AuthMiddleware(c *gin.Context) {
 	_, err := jwts.ParseToken(token)
 	if err != nil {
 		logrus.Errorf("认证失败: %v", err)
-		c.JSON(200, gin.H{"code": 7, "msg": "认证失败", "data": gin.H{}})
+		res.FailWithMsg("解析token失败", c)
 		c.Abort() // 拦截
 		return
 	}

@@ -12,6 +12,7 @@ func Run() {
 	g := r.Group("honey_server")
 	g.Use(middleware.LogMiddleware, middleware.AuthMiddleware)
 	UserRouters(g)
+	CaptchaRouters(g)
 	webAddr := global.Config.System.WebAddr
 	r.Run(webAddr)
 }
