@@ -52,6 +52,7 @@ func Run() {
 		default:
 			logrus.Fatalf("用户子菜单项不正确.")
 		}
+	case "":
 	default:
 		logrus.Fatalf("菜单项不正确")
 	}
