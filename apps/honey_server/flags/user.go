@@ -7,7 +7,7 @@ import (
 	"golang.org/x/crypto/ssh/terminal"
 	"honey_app/apps/honey_server/global"
 	"honey_app/apps/honey_server/models"
-	"honey_app/apps/honey_server/utils/pwd"
+	"honey_app/apps/honey_server/service/user_service"
 	"os"
 	"time"
 )
@@ -15,14 +15,8 @@ import (
 type User struct {
 }
 
-type UserInfoRequest struct {
-	Role     int8   `json:"role"`
-	Username string `json:"username"`
-	Password string `json:"password"`
-}
-
 func (User) Create(value string) {
-	var userInfo UserInfoRequest
+	var userInfo user_service.UserCreateRequest
 	if value != "" {
 		err := json.Unmarshal([]byte(value), &userInfo)
 		if err != nil {
@@ -62,24 +56,11 @@ func (User) Create(value string) {
 		userInfo.Password = string(password)
 	}
 
-	var u models.UserModel
-	err := global.DB.Take(&u, "username = ?", userInfo.Username).Error
-	if err == nil {
-		fmt.Println("用户名已存在")
-		return
-	}
-
-	hashPwd, _ := pwd.GenerateFromPassword(userInfo.Password)
-	err = global.DB.Create(&models.UserModel{
-		Username: userInfo.Username,
-		Password: hashPwd,
-		Role:     userInfo.Role,
-	}).Error
+	us := user_service.NewUserService(global.Log)
+	_, err := us.Create(userInfo)
 	if err != nil {
 		logrus.Errorf("用户创建失败 %s", err)
-		return
 	}
-	logrus.Infof("用户创建成功")
 
 }
 func (User) List() {

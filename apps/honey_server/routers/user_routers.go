@@ -10,4 +10,5 @@ import (
 func UserRouters(r *gin.RouterGroup) {
 	var app = api.App.UserApi
 	r.POST("/login", middleware.BindJsonMiddleware[user_api.LoginRequest], app.LoginView)
+	r.POST("/users", middleware.AdminMiddleware, middleware.BindJsonMiddleware[user_api.CreateRequest], app.CreateView)
 }

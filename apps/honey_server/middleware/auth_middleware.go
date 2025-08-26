@@ -12,7 +12,6 @@ import (
 
 func AuthMiddleware(c *gin.Context) {
 	// 判断路径在不在白名单中，白名单中的路由不需要权限验证
-	fmt.Println(global.Config.WhiteList)
 	if utils.Inlist(global.Config.WhiteList, c.Request.URL.Path) {
 		// 在白名单中直接放行
 		c.Next()
