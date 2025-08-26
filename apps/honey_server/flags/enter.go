@@ -44,7 +44,7 @@ func Run() {
 		var user User
 		switch Options.Type {
 		case "create":
-			user.Create()
+			user.Create(Options.Value)
 			os.Exit(0)
 		case "list":
 			user.List()
@@ -56,5 +56,4 @@ func Run() {
 	default:
 		logrus.Fatalf("菜单项不正确")
 	}
-
 }
