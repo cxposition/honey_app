@@ -13,4 +13,5 @@ func UserRouters(r *gin.RouterGroup) {
 	r.POST("/users", middleware.AdminMiddleware, middleware.BindJsonMiddleware[user_api.CreateRequest], app.CreateView)
 	r.GET("/users", middleware.BindQueryMiddleware[user_api.UserListRequest], app.UserlistView)
 	r.POST("/logout", app.UserLogoutView)
+	r.DELETE("/users", middleware.BindJsonMiddleware[user_api.UserRemoveRequest], app.UserRemoveView)
 }
