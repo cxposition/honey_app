@@ -1,10 +1,8 @@
 package models
 
-import "gorm.io/gorm"
-
 // NetModel 网络表
 type NetModel struct {
-	gorm.Model
+	Model
 	NodeID             uint      `json:"nodeID"`
 	NodeModel          NodeModel `gorm:"foreignKey:NodeID" json:"-"` // 这个foreignKey要写结构体字段名
 	Title              string    `gorm:"size:32" json:"title"`

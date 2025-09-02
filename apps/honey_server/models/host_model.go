@@ -1,10 +1,8 @@
 package models
 
-import "gorm.io/gorm"
-
 // HostModel 主机表
 type HostModel struct {
-	gorm.Model
+	Model
 	NodeID    uint      `json:"nodeID"`
 	NodeModel NodeModel `gorm:"foreignKey:NodeID" json:"-"` // 这个foreignKey要写结构体字段名
 	NetID     uint      `json:"netID"`

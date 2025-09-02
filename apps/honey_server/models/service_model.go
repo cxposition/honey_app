@@ -1,9 +1,7 @@
 package models
 
-import "gorm.io/gorm"
-
 type ServiceModel struct {
-	gorm.Model
+	Model
 	Title         string     `json:"title"`
 	Agreement     int8       `json:"agreement"`
 	ImageID       uint       `json:"imageID"`

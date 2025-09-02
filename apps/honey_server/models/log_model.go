@@ -1,9 +1,7 @@
 package models
 
-import "gorm.io/gorm"
-
 type LogModel struct {
-	gorm.Model
+	Model
 	Type        int8   `json:"type"`
 	IP          string `json:"ip"`
 	Addr        string `json:"addr"`

@@ -1,9 +1,7 @@
 package models
 
-import "gorm.io/gorm"
-
 type ImageModel struct {
-	gorm.Model
+	Model
 	ImageName     string `json:"imageName"`
 	Title         string `json:"title"`
 	Port          int    `json:"port"`

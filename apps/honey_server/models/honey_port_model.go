@@ -1,9 +1,7 @@
 package models
 
-import "gorm.io/gorm"
-
 type HoneyPortModel struct {
-	gorm.Model
+	Model
 	NodeID       uint         `json:"nodeID"`
 	NodeModel    NodeModel    `gorm:"foreignKey:NodeID" json:"-"`
 	NetID        uint         `json:"netID"`

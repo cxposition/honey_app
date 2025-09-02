@@ -1,9 +1,7 @@
 package models
 
-import "gorm.io/gorm"
-
 type MatrixTemplateModel struct {
-	gorm.Model
+	Model
 	Title            string           `gorm:"size:32" json:"title"`
 	HostTemplateList HostTemplateList `gorm:"serializer:json" json:"hostTemplateList"`
 }

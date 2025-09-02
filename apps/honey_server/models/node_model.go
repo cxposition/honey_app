@@ -1,10 +1,8 @@
 package models
 
-import "gorm.io/gorm"
-
 // NodeModel 节点表
 type NodeModel struct {
-	gorm.Model
+	Model
 	Title        string `json:"title"` // 节点名称
 	IP           string `json:"IP"`
 	Status       int8   `json:"status"`       // 节点状态

@@ -1,9 +1,7 @@
 package models
 
-import "gorm.io/gorm"
-
 type HostTemplateModel struct {
-	gorm.Model
+	Model
 	Title    string               `gorm:"size:32" json:"title"`
 	PortList HostTemplatePortList `gorm:"serializer:json" json:"portList"` // 主机模版列表
 }

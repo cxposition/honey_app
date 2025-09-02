@@ -27,9 +27,18 @@ func (UserApi) UserlistView(c *gin.Context) {
 		cr.Page = 1
 	}
 	offset := (cr.Page - 1) * cr.Limit
-	fmt.Println("offset:", offset, "cr.limit:", cr.Limit, "cr.Page", cr.Page)
-	global.DB.Offset(offset).Limit(cr.Limit).Find(&list)
+	query := global.DB.Where(models.UserModel{
+		Username: cr.Username,
+	})
+	var like = global.DB.Where("")
+	if cr.Key != "" {
+		like.Where("username like ?", fmt.Sprintf("%%%s%%", cr.Key))
+	}
+	baseDB := global.DB.Debug()
+	baseDB = baseDB.Preload("LogList")
+
+	baseDB.Offset(offset).Limit(cr.Limit).Where(like).Where(query).Find(&list)
 	var count int64
-	global.DB.Model(&models.UserModel{}).Count(&count)
+	global.DB.Debug().Model(&models.UserModel{}).Where(like).Where(query).Count(&count)
 	res.OkWithList(list, count, c)
 }
