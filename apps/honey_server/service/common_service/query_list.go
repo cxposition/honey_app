@@ -37,11 +37,11 @@ func QueryList[T any](model T, req Request) (list []T, count int64, err error) {
 
 	// 模糊匹配
 	if req.PageInfo.Key != "" {
-		like := core.GetDB().Where("")
+		where := core.GetDB().Where("")
 		for _, c := range req.Likes {
 			db.Or(fmt.Sprintf("%s like ?", c), fmt.Sprintf("%%%s%%", req.PageInfo.Key))
 		}
-		db = db.Where(like)
+		db = db.Where(where)
 	}
 
 	// 分页

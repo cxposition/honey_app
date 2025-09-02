@@ -19,15 +19,20 @@ func AuthMiddleware(c *gin.Context) {
 		return
 	}
 	token := c.GetHeader("token")
-	_, err := jwts.ParseToken(token)
+	claims, err := jwts.ParseToken(token)
 	if err != nil {
 		logrus.Errorf("认证失败: %v", err)
 		res.FailWithMsg("解析token失败", c)
 		c.Abort() // 拦截
 		return
 	}
+	c.Set("claims", claims)
 	c.Next()
 	fmt.Println("认证通过")
+}
+
+func GetAuth(c *gin.Context) *jwts.Claims {
+	return c.MustGet("claims").(*jwts.Claims)
 }
 
 func AdminMiddleware(c *gin.Context) {
