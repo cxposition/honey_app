@@ -10,4 +10,5 @@ import (
 func LogRouters(r *gin.RouterGroup) {
 	var app = api.App.LogApi
 	r.GET("logs", middleware.AdminMiddleware, middleware.BindQueryMiddleware[log_api.LogListRequest], app.LogListView)
+	r.DELETE("logs", middleware.AdminMiddleware, middleware.BindJsonMiddleware[log_api.LogRemoveRequest], app.LogRemoveView)
 }

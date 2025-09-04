@@ -7,11 +7,12 @@ import (
 )
 
 type RemoveRequest struct {
-	Debug  bool
-	Where  *gorm.DB
-	IDList []uint
-	Log    *logrus.Entry
-	Msg    string
+	Debug    bool
+	Where    *gorm.DB
+	IDList   []uint
+	Log      *logrus.Entry
+	Msg      string
+	Unscoped bool
 }
 
 func Remove[T any](model T, req RemoveRequest) (successCount int64, err error) {
@@ -21,6 +22,10 @@ func Remove[T any](model T, req RemoveRequest) (successCount int64, err error) {
 	}
 	if req.Where != nil {
 		db = db.Where(req.Where)
+	}
+	if req.Unscoped {
+		req.Log.Infof("真删除")
+		db = db.Unscoped()
 	}
 
 	db = db.Where(model)
@@ -36,7 +41,7 @@ func Remove[T any](model T, req RemoveRequest) (successCount int64, err error) {
 		return
 	}
 
-	result := global.DB.Delete(&list)
+	result := db.Delete(&list)
 	if result.Error != nil {
 		req.Log.Infof("删除失败 %s", result.Error)
 		return
