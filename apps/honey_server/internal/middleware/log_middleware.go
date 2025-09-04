@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
-	"honey_app/apps/honey_server/internal/global"
+	"honey_server/internal/global"
 )
 
 func LogMiddleware(c *gin.Context) {

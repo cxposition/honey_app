@@ -2,9 +2,9 @@ package log_service
 
 import (
 	"github.com/gin-gonic/gin"
-	"honey_app/apps/honey_server/internal/core"
-	"honey_app/apps/honey_server/internal/global"
-	"honey_app/apps/honey_server/internal/models"
+	"honey_server/internal/core"
+	"honey_server/internal/global"
+	"honey_server/internal/models"
 )
 
 type LoginLogService struct {

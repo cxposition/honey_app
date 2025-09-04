@@ -2,10 +2,10 @@ package user_api
 
 import (
 	"github.com/gin-gonic/gin"
-	"honey_app/apps/honey_server/internal/global"
-	"honey_app/apps/honey_server/internal/middleware"
-	"honey_app/apps/honey_server/internal/models"
-	"honey_app/apps/honey_server/internal/utils/res"
+	"honey_server/internal/global"
+	"honey_server/internal/middleware"
+	"honey_server/internal/models"
+	"honey_server/internal/utils/res"
 )
 
 type UserInfoResponse struct {

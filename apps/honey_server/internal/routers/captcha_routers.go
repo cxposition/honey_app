@@ -2,7 +2,7 @@ package routers
 
 import (
 	"github.com/gin-gonic/gin"
-	"honey_app/apps/honey_server/internal/api"
+	"honey_server/internal/api"
 )
 
 func CaptchaRouters(r *gin.RouterGroup) {

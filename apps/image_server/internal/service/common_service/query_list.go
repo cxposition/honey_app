@@ -3,8 +3,8 @@ package common_service
 import (
 	"fmt"
 	"gorm.io/gorm"
-	"honey_app/apps/image_server/internal/core"
-	"honey_app/apps/image_server/internal/models"
+	"image_server/internal/core"
+	"image_server/internal/models"
 )
 
 type Request struct {

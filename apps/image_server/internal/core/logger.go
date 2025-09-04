@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/sirupsen/logrus"
-	"honey_app/apps/image_server/internal/global"
+	"image_server/internal/global"
 	"os"
 	"path"
 	"sync"

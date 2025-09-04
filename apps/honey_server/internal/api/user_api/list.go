@@ -2,14 +2,14 @@ package user_api
 
 import (
 	"github.com/gin-gonic/gin"
-	"honey_app/apps/honey_server/internal/middleware"
-	models2 "honey_app/apps/honey_server/internal/models"
-	"honey_app/apps/honey_server/internal/service/common_service"
-	"honey_app/apps/honey_server/internal/utils/res"
+	"honey_server/internal/middleware"
+	"honey_server/internal/models"
+	"honey_server/internal/service/common_service"
+	"honey_server/internal/utils/res"
 )
 
 type UserListRequest struct {
-	models2.PageInfo
+	models.PageInfo
 	Username string `form:"username"`
 }
 
@@ -38,7 +38,7 @@ func (UserApi) UserlistView(c *gin.Context) {
 	//var count int64
 	//global.DB.Debug().Model(&models.UserModel{}).Where(like).Where(query).Count(&count)
 	//res.OkWithList(list, count, c)
-	list, count, _ := common_service.QueryList(models2.UserModel{}, common_service.Request{
+	list, count, _ := common_service.QueryList(models.UserModel{}, common_service.Request{
 		Debug:    true,
 		Likes:    []string{"username"}, // username like req.Key
 		PageInfo: cr.PageInfo,

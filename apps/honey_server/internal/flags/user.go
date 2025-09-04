@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/crypto/ssh/terminal"
-	"honey_app/apps/honey_server/internal/global"
-	"honey_app/apps/honey_server/internal/models"
-	user_service2 "honey_app/apps/honey_server/internal/service/user_service"
+	"honey_server/internal/global"
+	"honey_server/internal/models"
+	"honey_server/internal/service/user_service"
 	"os"
 	"time"
 )
@@ -16,7 +16,7 @@ type User struct {
 }
 
 func (User) Create(value string) {
-	var userInfo user_service2.UserCreateRequest
+	var userInfo user_service.UserCreateRequest
 	if value != "" {
 		err := json.Unmarshal([]byte(value), &userInfo)
 		if err != nil {
@@ -56,7 +56,7 @@ func (User) Create(value string) {
 		userInfo.Password = string(password)
 	}
 
-	us := user_service2.NewUserService(global.Log)
+	us := user_service.NewUserService(global.Log)
 	_, err := us.Create(userInfo)
 	if err != nil {
 		logrus.Errorf("用户创建失败 %s", err)

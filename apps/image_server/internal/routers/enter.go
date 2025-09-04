@@ -2,8 +2,8 @@ package routers
 
 import (
 	"github.com/gin-gonic/gin"
-	"honey_app/apps/image_server/internal/global"
-	middleware2 "honey_app/apps/image_server/internal/middleware"
+	"image_server/internal/global"
+	middleware2 "image_server/internal/middleware"
 )
 
 func Run() {

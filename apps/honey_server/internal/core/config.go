@@ -3,8 +3,8 @@ package core
 import (
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
-	"honey_app/apps/honey_server/internal/config"
-	"honey_app/apps/honey_server/internal/flags"
+	"honey_server/internal/config"
+	"honey_server/internal/flags"
 	"os"
 )
 

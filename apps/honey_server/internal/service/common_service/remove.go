@@ -3,7 +3,7 @@ package common_service
 import (
 	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
-	"honey_app/apps/honey_server/internal/global"
+	"honey_server/internal/global"
 )
 
 type RemoveRequest struct {

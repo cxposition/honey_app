@@ -3,10 +3,10 @@ package user_api
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	middleware2 "honey_app/apps/honey_server/internal/middleware"
-	"honey_app/apps/honey_server/internal/models"
-	"honey_app/apps/honey_server/internal/service/common_service"
-	"honey_app/apps/honey_server/internal/utils/res"
+	"honey_server/internal/middleware"
+	"honey_server/internal/models"
+	"honey_server/internal/service/common_service"
+	"honey_server/internal/utils/res"
 )
 
 type UserRemoveRequest struct {
@@ -14,8 +14,8 @@ type UserRemoveRequest struct {
 }
 
 func (UserApi) UserRemoveView(c *gin.Context) {
-	cr := middleware2.GetBind[UserRemoveRequest](c)
-	log := middleware2.GetLog(c)
+	cr := middleware.GetBind[UserRemoveRequest](c)
+	log := middleware.GetLog(c)
 	successCount, err := common_service.Remove(models.UserModel{}, common_service.RemoveRequest{
 		Debug:  true,
 		IDList: cr.IDList,

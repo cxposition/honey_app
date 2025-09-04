@@ -1,4 +1,4 @@
-module honey_app
+module image_server
 
 go 1.24
 

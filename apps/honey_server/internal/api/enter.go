@@ -1,9 +1,9 @@
 package api
 
 import (
-	"honey_app/apps/honey_server/internal/api/captcha_api"
-	"honey_app/apps/honey_server/internal/api/log_api"
-	"honey_app/apps/honey_server/internal/api/user_api"
+	"honey_server/internal/api/captcha_api"
+	"honey_server/internal/api/log_api"
+	"honey_server/internal/api/user_api"
 )
 
 type Api struct {

@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
-	"honey_app/apps/image_server/internal/global"
-	"honey_app/apps/image_server/internal/utils"
-	"honey_app/apps/image_server/internal/utils/jwts"
-	"honey_app/apps/image_server/internal/utils/res"
+	"image_server/internal/global"
+	"image_server/internal/utils"
+	"image_server/internal/utils/jwts"
+	"image_server/internal/utils/res"
 )
 
 func AuthMiddleware(c *gin.Context) {

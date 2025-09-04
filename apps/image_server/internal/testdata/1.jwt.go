@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
-	"honey_app/apps/image_server/internal/core"
-	"honey_app/apps/image_server/internal/global"
-	"honey_app/apps/image_server/internal/utils/jwts"
+	"image_server/internal/core"
+	"image_server/internal/global"
+	"image_server/internal/utils/jwts"
 )
 
 func main() {

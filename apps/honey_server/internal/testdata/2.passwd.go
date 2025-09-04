@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"honey_app/apps/honey_server/internal/utils/pwd"
+	"honey_server/internal/utils/pwd"
 )
 
 func main() {

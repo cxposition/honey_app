@@ -4,7 +4,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"honey_app/apps/honey_server/internal/global"
+	"honey_server/internal/global"
 	"sync"
 	"time"
 )

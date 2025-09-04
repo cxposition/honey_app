@@ -4,7 +4,7 @@ package jwts
 import (
 	"errors"
 	"github.com/dgrijalva/jwt-go"
-	"honey_app/apps/honey_server/internal/global"
+	"honey_server/internal/global"
 	"time"
 )
 

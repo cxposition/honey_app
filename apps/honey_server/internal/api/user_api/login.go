@@ -3,14 +3,14 @@ package user_api
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
-	"honey_app/apps/honey_server/internal/global"
-	"honey_app/apps/honey_server/internal/middleware"
-	"honey_app/apps/honey_server/internal/models"
-	"honey_app/apps/honey_server/internal/service/log_service"
-	"honey_app/apps/honey_server/internal/utils/captcha"
-	"honey_app/apps/honey_server/internal/utils/jwts"
-	"honey_app/apps/honey_server/internal/utils/pwd"
-	"honey_app/apps/honey_server/internal/utils/res"
+	"honey_server/internal/global"
+	"honey_server/internal/middleware"
+	"honey_server/internal/models"
+	"honey_server/internal/service/log_service"
+	"honey_server/internal/utils/captcha"
+	"honey_server/internal/utils/jwts"
+	"honey_server/internal/utils/pwd"
+	"honey_server/internal/utils/res"
 )
 
 type LoginRequest struct {

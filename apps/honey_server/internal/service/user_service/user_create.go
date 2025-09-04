@@ -3,9 +3,9 @@ package user_service
 import (
 	"fmt"
 	"github.com/sirupsen/logrus"
-	"honey_app/apps/honey_server/internal/global"
-	"honey_app/apps/honey_server/internal/models"
-	"honey_app/apps/honey_server/internal/utils/pwd"
+	"honey_server/internal/global"
+	"honey_server/internal/models"
+	"honey_server/internal/utils/pwd"
 )
 
 type UserCreateRequest struct {

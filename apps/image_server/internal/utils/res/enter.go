@@ -2,7 +2,7 @@ package res
 
 import (
 	"github.com/gin-gonic/gin"
-	"honey_app/apps/image_server/internal/utils/validate"
+	"image_server/internal/utils/validate"
 )
 
 type Response struct {

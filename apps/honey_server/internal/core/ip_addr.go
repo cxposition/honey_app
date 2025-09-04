@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/lionsoul2014/ip2region/binding/golang/xdb"
 	"github.com/sirupsen/logrus"
-	"honey_app/apps/honey_server/internal/utils/ip"
+	"honey_server/internal/utils/ip"
 	"strings"
 )
 

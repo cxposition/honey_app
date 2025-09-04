@@ -4,8 +4,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/mojocn/base64Captcha"
 	"github.com/sirupsen/logrus"
-	"honey_app/apps/honey_server/internal/utils/captcha"
-	"honey_app/apps/honey_server/internal/utils/res"
+	"honey_server/internal/utils/captcha"
+	"honey_server/internal/utils/res"
 )
 
 type CaptchaApi struct {

@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/redis/go-redis/v9"
 	"github.com/sirupsen/logrus"
-	"honey_app/apps/honey_server/internal/global"
+	"honey_server/internal/global"
 	"sync"
 )
 

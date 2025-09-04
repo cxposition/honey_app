@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"honey_app/apps/image_server/internal/core"
+	"image_server/internal/core"
 )
 
 func main() {

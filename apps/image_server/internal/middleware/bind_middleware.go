@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"github.com/gin-gonic/gin"
-	"honey_app/apps/image_server/internal/utils/res"
+	"image_server/internal/utils/res"
 )
 
 func BindJsonMiddleware[T any](c *gin.Context) {

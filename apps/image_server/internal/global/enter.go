@@ -4,7 +4,7 @@ import (
 	"github.com/redis/go-redis/v9"
 	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
-	"honey_app/apps/image_server/internal/config"
+	"image_server/internal/config"
 )
 
 var (
