@@ -2,6 +2,7 @@ package log_service
 
 import (
 	"github.com/gin-gonic/gin"
+	"honey_app/apps/honey_server/core"
 	"honey_app/apps/honey_server/global"
 	"honey_app/apps/honey_server/models"
 )
@@ -14,7 +15,7 @@ type LoginLogService struct {
 func NewSuccessLog(c *gin.Context) *LoginLogService {
 	return &LoginLogService{
 		IP:   c.ClientIP(),
-		Addr: "",
+		Addr: core.GetIpAddr(c.ClientIP()),
 	}
 }
 

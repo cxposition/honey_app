@@ -8,6 +8,7 @@ import (
 )
 
 func main() {
+	core.InitIPDB()
 	global.Config = core.ReadConfig()
 	global.Log = core.GetLogger()
 	global.DB = core.GetDB()
