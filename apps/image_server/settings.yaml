@@ -1,0 +1,27 @@
+db:
+  db_name: "honey_db"
+  host: "111.111.111.133"
+  port: 3306
+  user: "root"
+  password: "123456"
+  maxIdleConns: 2
+  maxOpenConns: 100
+  connMaxLifeTime: 10000
+logger:
+  format: json
+  appName: honey_server
+  level: info
+redis:
+  addr: "111.111.111.133:6379"
+  password:
+  db: 1
+system:
+  webAddr: "127.0.0.1:8089"  # web的运行地址
+jwt:
+  expires: 8640000
+  issuer: chenxia
+  secret: chenx@qq.com
+whiteList:
+  - /honey_server/login
+  - /honey_server/captcha
+  - /honey_server/site

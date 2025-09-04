@@ -1,10 +1,10 @@
 package main
 
 import (
-	"honey_app/apps/honey_server/core"
-	"honey_app/apps/honey_server/flags"
-	"honey_app/apps/honey_server/global"
-	"honey_app/apps/honey_server/routers"
+	"honey_app/apps/honey_server/internal/core"
+	"honey_app/apps/honey_server/internal/flags"
+	"honey_app/apps/honey_server/internal/global"
+	"honey_app/apps/honey_server/internal/routers"
 )
 
 func main() {
