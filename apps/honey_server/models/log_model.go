@@ -5,7 +5,7 @@ type LogModel struct {
 	Type        int8   `json:"type"`
 	IP          string `json:"ip"`
 	Addr        string `json:"addr"`
-	UserID      string `json:"userID"`
+	UserID      uint   `json:"userID"`
 	Username    string `json:"username"`
 	Pwd         string `json:"pwd"`
 	LoginStatus bool   `json:"loginStatus"`
