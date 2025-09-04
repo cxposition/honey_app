@@ -13,6 +13,7 @@ func Run() {
 	g.Use(middleware.LogMiddleware, middleware.AuthMiddleware)
 	UserRouters(g)
 	CaptchaRouters(g)
+	LogRouters(g)
 	webAddr := global.Config.System.WebAddr
 	r.Run(webAddr)
 }
