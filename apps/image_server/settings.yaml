@@ -16,12 +16,10 @@ redis:
   password:
   db: 1
 system:
-  webAddr: "127.0.0.1:8089"  # web的运行地址
+  webAddr: "0.0.0.0:8080"  # web的运行地址
 jwt:
   expires: 8640000
   issuer: chenxia
   secret: chenx@qq.com
 whiteList:
-  - /honey_server/login
-  - /honey_server/captcha
-  - /honey_server/site
+  - /image_server/mirror_cloud/see
