@@ -7,7 +7,7 @@ import (
 	"image_server/internal/models"
 )
 
-type Request struct {
+type RequestList struct {
 	Debug    bool
 	Likes    []string
 	Where    *gorm.DB
@@ -16,7 +16,7 @@ type Request struct {
 	PageInfo models.PageInfo
 }
 
-func QueryList[T any](model T, req Request) (list []T, count int64, err error) {
+func QueryList[T any](model T, req RequestList) (list []T, count int64, err error) {
 	db := core.GetDB()
 	if req.Debug {
 		db = db.Debug()
