@@ -14,4 +14,5 @@ func MirrorCloudRouter(r *gin.RouterGroup) {
 	r.POST("mirror_cloud", middleware.BindJsonMiddleware[mirror_cloud_api.ImageCreateRequest], app.ImageCreateView)
 	r.GET("mirror_cloud", middleware.BindQueryMiddleware[mirror_cloud_api.ImageListRequest], app.ImageListView)
 	r.GET("mirror_cloud/:id", middleware.BindUriMiddleware[models.IDRequest], app.ImageDetailView)
+	r.PUT("mirror_cloud", middleware.BindJsonMiddleware[mirror_cloud_api.ImageUpdateRequest], app.ImageUpdateView)
 }
