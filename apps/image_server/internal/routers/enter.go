@@ -12,7 +12,8 @@ func Run() {
 	r := gin.Default()
 	r.Static("uploads", "uploads")
 	g := r.Group("image_server")
-	g.Use(middleware.LogMiddleware, middleware.AuthMiddleware)
+	//g.Use(middleware.LogMiddleware, middleware.AuthMiddleware)
+	g.Use(middleware.LogMiddleware)
 	MirrorCloudRouter(g)
 	webAddr := system.WebAddr
 	logrus.Infof("web addr run %s", webAddr)
