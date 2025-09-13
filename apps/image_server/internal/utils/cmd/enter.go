@@ -18,6 +18,5 @@ func Cmd(command string) (err error) {
 	if err != nil {
 		return err
 	}
-	logrus.Infof("命令输出 %s", stdout.String())
 	return nil
 }

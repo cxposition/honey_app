@@ -15,6 +15,7 @@ func Run() {
 	//g.Use(middleware.LogMiddleware, middleware.AuthMiddleware)
 	g.Use(middleware.LogMiddleware)
 	MirrorCloudRouter(g)
+	VsRouter(g)
 	webAddr := system.WebAddr
 	logrus.Infof("web addr run %s", webAddr)
 	r.Run(webAddr)
