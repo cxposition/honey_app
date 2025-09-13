@@ -19,9 +19,9 @@ type ImageModel struct {
 	Tag           string         `gorm:"size:32" json:"tag"`
 	Agreement     int8           `json:"agreement"`                 // 协议
 	ImagePath     string         `gorm:"size:256" json:"imagePath"` // 镜像文件
-	Status        int8           `json:"status"`
-	Logo          string         `gorm:"size:256" json:"logo"` // 镜像logo
-	Desc          string         `gorm:"size:512" json:"desc"` // 镜像描述
+	Status        int8           `json:"status"`                    //
+	Logo          string         `gorm:"size:256" json:"logo"`      // 镜像logo
+	Desc          string         `gorm:"size:512" json:"desc"`      // 镜像描述
 }
 
 func (i *ImageModel) BeforeDelete(tx *gorm.DB) error {
