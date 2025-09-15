@@ -11,5 +11,6 @@ func InitDocker() *client.Client {
 	if err != nil {
 		logrus.Fatalf("创建docker客户端失败: %v", err)
 	}
+	logrus.Infof("创建docker客户端成功")
 	return cli
 }
