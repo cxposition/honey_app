@@ -9,6 +9,7 @@ type Config struct {
 	System    System   `yaml:"system"`
 	Jwt       Jwt      `yaml:"jwt"`
 	WhiteList []string `yaml:"whiteList"`
+	VsNet     VsNet    `yaml:"vsNet"`
 }
 
 type DB struct {
@@ -51,4 +52,10 @@ type Jwt struct {
 	Expires int    `yaml:"expires"` // 单位为秒
 	Issuer  string `yaml:"issuer"`
 	Secret  string `yaml:"secret"`
+}
+
+type VsNet struct {
+	Name   string `yaml:"name"`
+	Prefix string `yaml:"prefix"`
+	Net    string `yaml:"net"`
 }

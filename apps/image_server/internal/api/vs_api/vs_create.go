@@ -9,11 +9,16 @@ import (
 	"image_server/internal/models"
 	"image_server/internal/service/docker_service"
 	"image_server/internal/utils/res"
+	"net"
 )
 
 type VsCreateRequest struct {
 	ImageID int `json:"imageID" binding:"required"`
 }
+
+const (
+	maxIP = 255
+)
 
 func (VsApi) VsCreateView(c *gin.Context) {
 	cr := middleware.GetBind[VsCreateRequest](c)
@@ -37,18 +42,19 @@ func (VsApi) VsCreateView(c *gin.Context) {
 	}
 	// 使用docker命令运行容器
 	// docker run -d --name xxx -p
-	ip := "10.2.0.10"
-	networkName := "honey-hy"
-	containerName := "hy_" + image.ImageName
+	// Get next available IP
+	ip, err := getNextAvailableIP()
+	networkName := global.Config.VsNet.Name
+	containerName := global.Config.VsNet.Prefix + image.ImageName
 	containerID, err := docker_service.RunContainer(containerName, networkName, ip, fmt.Sprintf("%s:%s", image.ImageName, image.Tag))
 	if err != nil {
 		logrus.Errorf("保存虚拟服务记录失败 %s", err)
 		res.FailWithMsg("保存虚拟服务记录失败", c)
 		return
 	}
-	command := fmt.Sprintf("docker run -d --network honey-hy --ip %s --name %s %s:%s",
-		ip, image.ImageName, image.ImageName, image.Tag)
-	fmt.Println(command)
+	//command := fmt.Sprintf("docker run -d --network honey-hy --ip %s --name %s %s:%s",
+	//	ip, image.ImageName, image.ImageName, image.Tag)
+	//fmt.Println(command)
 	var model = models.ServiceModel{
 		Title:       image.Title,
 		Agreement:   image.Agreement,
@@ -65,4 +71,39 @@ func (VsApi) VsCreateView(c *gin.Context) {
 	}
 	res.OkWithMsg("创建虚拟服务成功", c)
 	return
+}
+
+// 获取下一个可用IP
+func getNextAvailableIP() (string, error) {
+	ip, _, err := net.ParseCIDR(global.Config.VsNet.Net)
+	if err != nil {
+		return "", err
+	}
+	ip4 := ip.To4()
+	// 查询数据库中已分配的最大IP
+	var service models.ServiceModel
+	err = global.DB.Order("ip DESC").First(&service).Error
+	if err != nil {
+		if err.Error() == "record not found" {
+			// 没有记录，返回起始IP
+			ip4[3] = 2
+			return ip4.String(), nil
+		}
+		return "", fmt.Errorf("查询最大IP失败: %w", err)
+	}
+
+	serviceIP := net.ParseIP(service.IP)
+	if serviceIP == nil {
+		return "", fmt.Errorf("服务ip解析错误")
+	}
+	serviceIP4 := serviceIP.To4()
+
+	// 检查是否达到最大IP
+	if serviceIP4[3] >= maxIP {
+		return "", fmt.Errorf("IP地址池已满")
+	}
+	// 生成新IP
+	newLastOctet := serviceIP4[3] + 1
+	ip4[3] = newLastOctet
+	return ip4.String(), nil
 }

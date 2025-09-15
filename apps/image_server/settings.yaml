@@ -24,3 +24,7 @@ jwt:
 whiteList:
   - /image_server/mirror_cloud/see
   - /image_server/mirror_cloud
+vsNet:
+  name: "honey-hy"
+  prefix: hy-
+  net: "10.2.0.0/24"
