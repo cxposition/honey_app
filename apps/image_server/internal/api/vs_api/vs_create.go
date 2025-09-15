@@ -31,7 +31,7 @@ func (VsApi) VsCreateView(c *gin.Context) {
 	// 判断有没有这个镜像有没有跑过这个服务
 	var service models.ServiceModel
 	err = global.DB.Take(&service, "image_id = ?", cr.ImageID).Error
-	if err != nil {
+	if err == nil {
 		res.FailWithMsg("镜像已运行虚拟服务", c)
 		return
 	}
