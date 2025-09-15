@@ -7,7 +7,7 @@ import (
 	"image_server/internal/global"
 	"image_server/internal/middleware"
 	"image_server/internal/models"
-	"image_server/internal/utils/cmd"
+	"image_server/internal/service/docker_service"
 	"image_server/internal/utils/res"
 )
 
@@ -28,17 +28,27 @@ func (VsApi) VsCreateView(c *gin.Context) {
 		return
 	}
 
+	// 判断有没有这个镜像有没有跑过这个服务
+	var service models.ServiceModel
+	err = global.DB.Take(&service, "image_id = ?", cr.ImageID).Error
+	if err != nil {
+		res.FailWithMsg("镜像已运行虚拟服务", c)
+		return
+	}
 	// 使用docker命令运行容器
 	// docker run -d --name xxx -p
 	ip := "10.2.0.10"
-	command := fmt.Sprintf("docker run -d --network honey-hy --ip %s --name %s %s:%s",
-		ip, image.ImageName, image.ImageName, image.Tag)
-	err = cmd.Cmd(command)
+	networkName := "honey-hy"
+	containerName := "hy_" + image.ImageName
+	containerID, err := docker_service.RunContainer(containerName, networkName, ip, fmt.Sprintf("%s:%s", image.ImageName, image.Tag))
 	if err != nil {
-		logrus.Errorf("创建虚拟服务失败 %s", err)
-		res.FailWithMsg("创建虚拟服务失败", c)
+		logrus.Errorf("保存虚拟服务记录失败 %s", err)
+		res.FailWithMsg("保存虚拟服务记录失败", c)
 		return
 	}
+	command := fmt.Sprintf("docker run -d --network honey-hy --ip %s --name %s %s:%s",
+		ip, image.ImageName, image.ImageName, image.Tag)
+	fmt.Println(command)
 	var model = models.ServiceModel{
 		Title:       image.Title,
 		Agreement:   image.Agreement,
@@ -46,7 +56,7 @@ func (VsApi) VsCreateView(c *gin.Context) {
 		IP:          ip,
 		Port:        image.Port,
 		Status:      1,
-		ContainerID: "",
+		ContainerID: containerID,
 	}
 	err = global.DB.Create(&model).Error
 	if err != nil {

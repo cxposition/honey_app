@@ -13,6 +13,7 @@ func main() {
 	global.Log = core.GetLogger()
 	global.DB = core.GetDB()
 	global.Redis = core.GetRedis()
+	global.DockerClient = core.InitDocker()
 	flags.Run()
 	routers.Run()
 }

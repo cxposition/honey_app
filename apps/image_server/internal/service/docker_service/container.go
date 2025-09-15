@@ -1,4 +1,4 @@
-package main
+package docker_service
 
 import (
 	"context"
@@ -10,29 +10,7 @@ import (
 	"log"
 )
 
-func main() {
-	// ================== 可配置参数（你只需修改下面这些）==================
-
-	const (
-		// 镜像名称（支持 tag）
-		ImageName = "nginx:latest"
-
-		// 容器名称（必须唯一）
-		ContainerName = "my-nginx"
-
-		// 自定义网络名称（必须是用户自定义网络，不能是 default bridge）
-		NetworkName = "honey-hy"
-
-		// 指定容器在该网络中的静态 IP（必须属于网络子网范围）
-		ContainerIP = "10.2.0.15"
-
-		// 主机端口映射：主机端口 -> 容器端口
-		//HostPort      = "8888"
-		//ContainerPort = "80"
-	)
-
-	// ====================================================================
-
+func RunContainer(containerName, networkName, ip, imageName string) (containerID string, err error) {
 	// 初始化 Docker 客户端
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	if err != nil {
@@ -44,18 +22,17 @@ func main() {
 
 	// 配置容器镜像和命令
 	containerConfig := &container.Config{
-		Image: ImageName,
-		Cmd:   []string{"nginx", "-g", "daemon off;"},
-		//ExposedPorts: map[nat.Port]struct{}{
-		//	nat.Port(ContainerPort + "/tcp"): {},
-		//},
+		Image:        imageName,
+		ExposedPorts: map[nat.Port]struct{}{
+			//nat.Port(ContainerPort + "/tcp"): {},
+		},
 	}
 
 	// 端口绑定配置
 	hostConfig := &container.HostConfig{
 		PortBindings: map[nat.Port][]nat.PortBinding{
 			//nat.Port(ContainerPort + "/tcp"): {{
-			//	HostIP:   "0.0.0.0",
+			//	HostIP: "0.0.0.0",
 			//	HostPort: HostPort,
 			//}},
 		},
@@ -64,16 +41,16 @@ func main() {
 	// 网络配置：指定网络和静态 IP
 	networkConfig := &network.NetworkingConfig{
 		EndpointsConfig: map[string]*network.EndpointSettings{
-			NetworkName: {
+			networkName: {
 				IPAMConfig: &network.EndpointIPAMConfig{ // ← 注意：是 EndpointIPAMConfig
-					IPv4Address: ContainerIP, // ✅ 这里才是正确位置
+					IPv4Address: ip, // ✅ 这里才是正确位置
 				},
 			},
 		},
 	}
 
 	// 创建容器（使用指定名称）
-	resp, err := cli.ContainerCreate(ctx, containerConfig, hostConfig, networkConfig, nil, ContainerName)
+	resp, err := cli.ContainerCreate(ctx, containerConfig, hostConfig, networkConfig, nil, containerName)
 	if err != nil {
 		log.Fatal("创建容器失败:", err)
 	}
@@ -85,5 +62,6 @@ func main() {
 		log.Fatal("启动容器失败:", err)
 	}
 
-	//fmt.Printf("🚀 容器 %s 已启动，访问 http://localhost:%s 查看服务\n", ContainerName, HostPort)
+	//fmt.Printf("🚀 容器 %s 已启动，访问 http://localhost:%s 查看服务\n", containerName, HostPort)
+	return
 }
