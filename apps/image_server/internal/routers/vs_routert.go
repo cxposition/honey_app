@@ -10,4 +10,5 @@ import (
 func VsRouter(r *gin.RouterGroup) {
 	app := api.App.VsApi
 	r.POST("vs", middleware.BindJsonMiddleware[vs_api.VsCreateRequest], app.VsCreateView)
+	r.GET("vs", middleware.BindQueryMiddleware[vs_api.VsListRequest], app.VsListView)
 }

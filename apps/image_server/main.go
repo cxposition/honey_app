@@ -5,7 +5,6 @@ import (
 	"image_server/internal/flags"
 	"image_server/internal/global"
 	"image_server/internal/routers"
-	"image_server/internal/service/cron_service"
 )
 
 func main() {
@@ -15,7 +14,7 @@ func main() {
 	global.DB = core.GetDB()
 	global.Redis = core.GetRedis()
 	global.DockerClient = core.InitDocker()
-	cron_service.Run()
+	//cron_service.Run()
 	flags.Run()
 	routers.Run()
 }
