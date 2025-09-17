@@ -2,8 +2,6 @@ module image_server
 
 go 1.24.0
 
-toolchain go1.24.6
-
 require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/docker/docker v28.4.0+incompatible
