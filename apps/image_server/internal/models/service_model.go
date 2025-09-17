@@ -1,5 +1,13 @@
 package models
 
+import (
+	"errors"
+	"fmt"
+	"github.com/sirupsen/logrus"
+	"gorm.io/gorm"
+	"image_server/internal/utils/cmd"
+)
+
 type ServiceModel struct {
 	Model
 	Title         string     `json:"title"`
@@ -22,4 +30,22 @@ func (s *ServiceModel) State() string {
 
 	}
 	return "error"
+}
+
+func (s *ServiceModel) BeforeDelete(tx *gorm.DB) error {
+	// 判断是否有关联的端口转发
+	var count int64
+	tx.Model(&HoneyPortModel{}).Where("service_id = ?", s.ID).Count(&count)
+	if count > 0 {
+		return errors.New("存在端口转发,不能删除虚拟服务")
+	}
+
+	command := fmt.Sprintf("docker rm -f %s", s.ContainerName)
+	err := cmd.Cmd(command)
+	if err != nil {
+		logrus.Errorf("删除容器失败 %s", err)
+		return err
+	}
+	return nil
+
 }
