@@ -25,6 +25,6 @@ whiteList:
   - /image_server/mirror_cloud/see
   - /image_server/mirror_cloud
 vsNet:
-  name: "honey-hy"
+  name: "honey-hhhh"
   prefix: hy-
   net: "10.2.0.0/24"

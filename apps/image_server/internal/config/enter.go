@@ -9,7 +9,7 @@ type Config struct {
 	System    System   `yaml:"system"`
 	Jwt       Jwt      `yaml:"jwt"`
 	WhiteList []string `yaml:"whiteList"`
-	VsNet     VsNet    `yaml:"vsNet"`
+	VsNet     `yaml:"vsNet"`
 }
 
 type DB struct {
@@ -55,7 +55,7 @@ type Jwt struct {
 }
 
 type VsNet struct {
-	Name   string `yaml:"name"`
-	Prefix string `yaml:"prefix"`
-	Net    string `yaml:"net"`
+	Name   string `yaml:"name" json:"name"`
+	Prefix string `yaml:"prefix" json:"prefix"`
+	Net    string `yaml:"net" json:"net"`
 }
