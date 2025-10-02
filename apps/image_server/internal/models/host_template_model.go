@@ -8,6 +8,6 @@ type HostTemplateModel struct {
 
 type HostTemplatePortList []HostTemplatePort
 type HostTemplatePort struct {
-	Port      int  `json:"port"`
-	ServiceID uint `json:"serviceID"`
+	Port      int  `json:"port" binding:"min=1,max=65535"`
+	ServiceID uint `json:"serviceID" binding:"required"`
 }

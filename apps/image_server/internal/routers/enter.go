@@ -17,6 +17,7 @@ func Run() {
 	MirrorCloudRouter(g)
 	VsRouter(g)
 	VsNetRouter(g)
+	HostTemplateRouter(g)
 	webAddr := system.WebAddr
 	logrus.Infof("web addr run %s", webAddr)
 	r.Run(webAddr)
