@@ -12,4 +12,6 @@ func HostTemplateRouter(r *gin.RouterGroup) {
 	app := api.App.HostTemplateApi
 	r.POST("host_template", middleware.BindJsonMiddleware[host_template_api.CreateReuqest], app.CreateView)
 	r.GET("host_template", middleware.BindQueryMiddleware[models.PageInfo], app.ListView)
+	r.GET("vs_net/options", app.OptionsView)
+
 }
