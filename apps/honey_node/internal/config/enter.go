@@ -3,12 +3,8 @@ package config
 import "fmt"
 
 type Config struct {
-	DB        DB       `yaml:"db"`
-	Logger    Logger   `yaml:"logger"`
-	Redis     Redis    `yaml:"redis"`
-	System    System   `yaml:"system"`
-	Jwt       Jwt      `yaml:"jwt"`
-	WhiteList []string `yaml:"whiteList"`
+	Logger Logger `yaml:"logger"`
+	System System `yaml:"system"`
 }
 
 type DB struct {
@@ -38,18 +34,6 @@ type Logger struct {
 	AppName string `yaml:"appName"`
 }
 
-type Redis struct {
-	Addr     string `yaml:"addr"`
-	Password string `yaml:"password"`
-	DB       int    `yaml:"db"`
-}
-
 type System struct {
-	WebAddr  string `yaml:"webAddr"`
-	GrpcAddr string `yaml:"grpcAddr"`
-}
-type Jwt struct {
-	Expires int    `yaml:"expires"` // 单位为秒
-	Issuer  string `yaml:"issuer"`
-	Secret  string `yaml:"secret"`
+	GrpcManageAddr string `yaml:"grpcManageAddr"`
 }

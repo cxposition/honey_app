@@ -18,6 +18,7 @@ func Run() {
 	VsRouter(g)
 	VsNetRouter(g)
 	HostTemplateRouter(g)
+	MatrixTemplateRouter(g)
 	webAddr := system.WebAddr
 	logrus.Infof("web addr run %s", webAddr)
 	r.Run(webAddr)

@@ -17,6 +17,7 @@ redis:
   db: 1
 system:
   webAddr: "127.0.0.1:8089"  # web的运行地址
+  grpcAddr: ":8081"          # rpc的运行地址
 jwt:
   expires: 8640000
   issuer: chenxia
