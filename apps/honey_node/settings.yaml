@@ -3,5 +3,7 @@ logger:
   appName: honey_node
   level: info
 system:
-  webAddr: "127.0.0.1:8089"                 # web的运行地址
-  grpcManageAddr: "127.0.0.1:8081"         # rpc的运行地址
+  grpcManageAddr: "127.0.0.1:8081"          # rpc的运行地址
+  network: "ens33"
+  uid:
+#  webAddr: "127.0.0.1:8089"                    # web的运行地址

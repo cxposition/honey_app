@@ -1,8 +1,6 @@
 package grpc_service
 
 import (
-	"context"
-	"fmt"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"honey_server/internal/global"
@@ -12,12 +10,6 @@ import (
 
 type NodeService struct {
 	node_rpc.UnimplementedNodeServiceServer
-}
-
-func (NodeService) Register(ctx context.Context, request *node_rpc.RegisterRequest) (pd *node_rpc.BaseResponse, err error) {
-	pd = new(node_rpc.BaseResponse)
-	fmt.Println("节点注册:", request)
-	return
 }
 
 func Run() {

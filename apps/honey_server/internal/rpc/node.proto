@@ -1,30 +1,50 @@
-syntax = "proto3";    // 指定proto版本
-package node_rpc;     // 指定默认包名
+syntax = "proto3";  // 指定proto版本
+package node_rpc;   // 指定默认包名
 
 // 指定golang包名
 option go_package = "/node_rpc";
 
-//定义rpc服务
+// 定义rpc服务
 service NodeService {
-  // 定义函数
-  rpc Register (RegisterRequest) returns (BaseResponse) {}
+    // 定义函数
+    rpc Register(RegisterRequest) returns (BaseResponse) {}
 }
 
 message BaseResponse {
-  int32 code = 1;
-  string msg = 2;
+    int32 code = 1;
+    string msg = 2;
 }
 
 // HelloRequest 请求内容
 message RegisterRequest {
-  string ip = 1;
-  string mac = 2;
-  string node_uid = 3;  // 消息号
-  string version = 4;
-  string commit = 5;
+    string ip                    = 1;
+    string mac                   = 2;
+    string node_uid              = 3;  // 消息号
+    string version               = 4;
+    string commit                = 5;
+    systemInfoMessage systemInfo = 6;
+    resourceMessage resourceInfo = 7;
 }
 
-// proto --go_out=. --go-grpc_out=. *.proto
+message systemInfoMessage {
+    string hostName            = 1;
+    string distributionVersion = 2;
+    string coreVersion         = 3;
+    string systemType          = 4;
+    string startTime           = 5;
+}
+message resourceMessage {
+    int64 cpuCount              = 1;
+    float cpuUseRate            = 2;
+    int64 memTotal              = 3;
+    float memUseRate            = 4;
+    int64 diskTotal             = 5;
+    float diskUseRate           = 6;
+    string nodePath             = 7;
+    int64 nodeResourceOccupancy = 8;
+}
+
+// protoc --go_out=. --go-grpc_out=. *.proto
 
 // HelloResponse 响应内容
 //message RegisterResponse {

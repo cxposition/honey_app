@@ -4,7 +4,9 @@ package models
 type NodeModel struct {
 	Model
 	Title        string `json:"title"` // 节点名称
+	Uid          string `gorm:"size:64" json:"uid"`
 	IP           string `json:"IP"`
+	Mac          string `gorm:"size:64" json:"mac"`
 	Status       int8   `json:"status"`       // 节点状态
 	NetCount     int    `json:"netCount"`     // 网络连接数目
 	HoneyIPCount int    `json:"honeyIPCount"` // 诱捕IP数
@@ -30,4 +32,6 @@ type NodeSystemInfo struct {
 	CoreVersion         string `json:"coreVersion"`         // 内核版本
 	SystemType          string `json:"systemType"`          // 系统类型
 	StartTime           string `json:"startTime"`           // 启动时间
+	NodeVersion         string `json:"nodeVersion"`
+	NodeCommit          string `json:"nodeCommit"`
 }

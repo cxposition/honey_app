@@ -36,4 +36,6 @@ type Logger struct {
 
 type System struct {
 	GrpcManageAddr string `yaml:"grpcManageAddr"`
+	Network        string `yaml:"network"`
+	Uid            string `yaml:"uid"`
 }
