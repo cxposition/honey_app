@@ -2,47 +2,65 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 	"honey_node/internal/core"
 	"honey_node/internal/global"
 	"honey_node/internal/rpc/node_rpc"
+	"honey_node/internal/service/cron_service"
+	"honey_node/internal/utils/info"
 	"honey_node/internal/utils/ip"
-	"log"
 	"os"
+	"time"
 )
 
 func main() {
 	global.Config = core.ReadConfig()
 	global.Log = core.GetLogger()
+	logrus.Infof("启动成功，版本：%s, 提交：%s", global.Version, global.Commit)
+	global.GrpcClient = core.GetGrpcClient()
 
-	addr := global.Config.System.GrpcManageAddr
-	// 使用 grpc.Dial 创建一个到指定地址的 gRPC 连接。
-	// 此处使用不安全的证书来实现 SSL/TLS 连接
-	conn, err := grpc.NewClient(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	err := register()
 	if err != nil {
-		log.Fatalf(fmt.Sprintf("grpc connect addr [%s] 连接失败 %s", addr, err))
+		logrus.Errorf("节点注册失败：%v", err)
+		return
 	}
-	defer conn.Close()
+
+	logrus.Info("节点注册成功")
+	cron_service.Run()
+	select {}
+
+}
+
+func register() error {
+	if global.Config.System.Uid == "" {
+		global.Config.System.Uid = uuid.NewString()
+		core.SetConfig(global.Config)
+	}
+
 	// 初始化客户端
-	client := node_rpc.NewNodeServiceClient(conn)
 	_ip, mac, err := ip.GetNetworkInfo(global.Config.System.Network)
 	if err != nil {
-		logrus.Fatalln(err)
+		logrus.Errorf("获取网络信息失败：%v", err)
+		return err
 	}
-	uid := uuid.New().String()
-	if global.Config.System.Uid == "" {
-		global.Config.System.Uid = uid
-	}
+
+	// 拿到主机名
 	hostName, err := os.Hostname()
 	if err != nil {
-		logrus.Fatalln(err)
+		logrus.Errorf("获取主机名失败：%v", err)
+		return err
 	}
-	core.SetConfig()
-	result, err := client.Register(context.Background(), &node_rpc.RegisterRequest{
+
+	// 获取系统信息
+	systemInfo, err := info.GetSystemInfo()
+	if err != nil {
+		logrus.Errorf("获取系统信息失败：%v", err)
+		return err
+	}
+
+	// 节点注册
+	_, err = global.GrpcClient.Register(context.Background(), &node_rpc.RegisterRequest{
 		Ip:      _ip,
 		Mac:     mac,
 		NodeUid: global.Config.System.Uid,
@@ -50,11 +68,16 @@ func main() {
 		Commit:  global.Commit,
 		SystemInfo: &node_rpc.SystemInfoMessage{
 			HostName:            hostName,
-			DistributionVersion: "",
-			CoreVersion:         "",
-			SystemType:          "",
-			StartTime:           "",
+			DistributionVersion: systemInfo.Distribution,
+			CoreVersion:         systemInfo.KernelVersion,
+			SystemType:          systemInfo.Arch,
+			StartTime:           systemInfo.BootTime.Format(time.DateTime),
 		},
 	})
-	fmt.Println(result, err)
+	if err != nil {
+		logrus.Errorf("节点注册失败：%v", err)
+		return err
+	}
+	logrus.Infof("节点注册成功")
+	return nil
 }

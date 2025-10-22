@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.6
 // 	protoc        v3.19.4
-// source: node.proto
+// source: internal/rpc/node.proto
 
 package node_rpc
 
@@ -31,7 +31,7 @@ type BaseResponse struct {
 
 func (x *BaseResponse) Reset() {
 	*x = BaseResponse{}
-	mi := &file_node_proto_msgTypes[0]
+	mi := &file_internal_rpc_node_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -43,7 +43,7 @@ func (x *BaseResponse) String() string {
 func (*BaseResponse) ProtoMessage() {}
 
 func (x *BaseResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_node_proto_msgTypes[0]
+	mi := &file_internal_rpc_node_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -56,7 +56,7 @@ func (x *BaseResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BaseResponse.ProtoReflect.Descriptor instead.
 func (*BaseResponse) Descriptor() ([]byte, []int) {
-	return file_node_proto_rawDescGZIP(), []int{0}
+	return file_internal_rpc_node_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *BaseResponse) GetCode() int32 {
@@ -89,7 +89,7 @@ type RegisterRequest struct {
 
 func (x *RegisterRequest) Reset() {
 	*x = RegisterRequest{}
-	mi := &file_node_proto_msgTypes[1]
+	mi := &file_internal_rpc_node_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -101,7 +101,7 @@ func (x *RegisterRequest) String() string {
 func (*RegisterRequest) ProtoMessage() {}
 
 func (x *RegisterRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_node_proto_msgTypes[1]
+	mi := &file_internal_rpc_node_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -114,7 +114,7 @@ func (x *RegisterRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RegisterRequest.ProtoReflect.Descriptor instead.
 func (*RegisterRequest) Descriptor() ([]byte, []int) {
-	return file_node_proto_rawDescGZIP(), []int{1}
+	return file_internal_rpc_node_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *RegisterRequest) GetIp() string {
@@ -166,6 +166,58 @@ func (x *RegisterRequest) GetResourceInfo() *ResourceMessage {
 	return nil
 }
 
+type NodeResourceRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	NodeUid       string                 `protobuf:"bytes,1,opt,name=node_uid,json=nodeUid,proto3" json:"node_uid,omitempty"` // 消息号
+	ResourceInfo  *ResourceMessage       `protobuf:"bytes,2,opt,name=resourceInfo,proto3" json:"resourceInfo,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *NodeResourceRequest) Reset() {
+	*x = NodeResourceRequest{}
+	mi := &file_internal_rpc_node_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *NodeResourceRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*NodeResourceRequest) ProtoMessage() {}
+
+func (x *NodeResourceRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_internal_rpc_node_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use NodeResourceRequest.ProtoReflect.Descriptor instead.
+func (*NodeResourceRequest) Descriptor() ([]byte, []int) {
+	return file_internal_rpc_node_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *NodeResourceRequest) GetNodeUid() string {
+	if x != nil {
+		return x.NodeUid
+	}
+	return ""
+}
+
+func (x *NodeResourceRequest) GetResourceInfo() *ResourceMessage {
+	if x != nil {
+		return x.ResourceInfo
+	}
+	return nil
+}
+
 type SystemInfoMessage struct {
 	state               protoimpl.MessageState `protogen:"open.v1"`
 	HostName            string                 `protobuf:"bytes,1,opt,name=hostName,proto3" json:"hostName,omitempty"`
@@ -179,7 +231,7 @@ type SystemInfoMessage struct {
 
 func (x *SystemInfoMessage) Reset() {
 	*x = SystemInfoMessage{}
-	mi := &file_node_proto_msgTypes[2]
+	mi := &file_internal_rpc_node_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -191,7 +243,7 @@ func (x *SystemInfoMessage) String() string {
 func (*SystemInfoMessage) ProtoMessage() {}
 
 func (x *SystemInfoMessage) ProtoReflect() protoreflect.Message {
-	mi := &file_node_proto_msgTypes[2]
+	mi := &file_internal_rpc_node_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -204,7 +256,7 @@ func (x *SystemInfoMessage) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SystemInfoMessage.ProtoReflect.Descriptor instead.
 func (*SystemInfoMessage) Descriptor() ([]byte, []int) {
-	return file_node_proto_rawDescGZIP(), []int{2}
+	return file_internal_rpc_node_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *SystemInfoMessage) GetHostName() string {
@@ -258,7 +310,7 @@ type ResourceMessage struct {
 
 func (x *ResourceMessage) Reset() {
 	*x = ResourceMessage{}
-	mi := &file_node_proto_msgTypes[3]
+	mi := &file_internal_rpc_node_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -270,7 +322,7 @@ func (x *ResourceMessage) String() string {
 func (*ResourceMessage) ProtoMessage() {}
 
 func (x *ResourceMessage) ProtoReflect() protoreflect.Message {
-	mi := &file_node_proto_msgTypes[3]
+	mi := &file_internal_rpc_node_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -283,7 +335,7 @@ func (x *ResourceMessage) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResourceMessage.ProtoReflect.Descriptor instead.
 func (*ResourceMessage) Descriptor() ([]byte, []int) {
-	return file_node_proto_rawDescGZIP(), []int{3}
+	return file_internal_rpc_node_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *ResourceMessage) GetCpuCount() int64 {
@@ -342,12 +394,11 @@ func (x *ResourceMessage) GetNodeResourceOccupancy() int64 {
 	return 0
 }
 
-var File_node_proto protoreflect.FileDescriptor
+var File_internal_rpc_node_proto protoreflect.FileDescriptor
 
-const file_node_proto_rawDesc = "" +
+const file_internal_rpc_node_proto_rawDesc = "" +
 	"\n" +
-	"\n" +
-	"node.proto\x12\bnode_rpc\"4\n" +
+	"\x17internal/rpc/node.proto\x12\bnode_rpc\"4\n" +
 	"\fBaseResponse\x12\x12\n" +
 	"\x04code\x18\x01 \x01(\x05R\x04code\x12\x10\n" +
 	"\x03msg\x18\x02 \x01(\tR\x03msg\"\xfc\x01\n" +
@@ -360,7 +411,10 @@ const file_node_proto_rawDesc = "" +
 	"\n" +
 	"systemInfo\x18\x06 \x01(\v2\x1b.node_rpc.systemInfoMessageR\n" +
 	"systemInfo\x12=\n" +
-	"\fresourceInfo\x18\a \x01(\v2\x19.node_rpc.resourceMessageR\fresourceInfo\"\xc1\x01\n" +
+	"\fresourceInfo\x18\a \x01(\v2\x19.node_rpc.resourceMessageR\fresourceInfo\"o\n" +
+	"\x13NodeResourceRequest\x12\x19\n" +
+	"\bnode_uid\x18\x01 \x01(\tR\anodeUid\x12=\n" +
+	"\fresourceInfo\x18\x02 \x01(\v2\x19.node_rpc.resourceMessageR\fresourceInfo\"\xc1\x01\n" +
 	"\x11systemInfoMessage\x12\x1a\n" +
 	"\bhostName\x18\x01 \x01(\tR\bhostName\x120\n" +
 	"\x13distributionVersion\x18\x02 \x01(\tR\x13distributionVersion\x12 \n" +
@@ -381,61 +435,66 @@ const file_node_proto_rawDesc = "" +
 	"\tdiskTotal\x18\x05 \x01(\x03R\tdiskTotal\x12 \n" +
 	"\vdiskUseRate\x18\x06 \x01(\x02R\vdiskUseRate\x12\x1a\n" +
 	"\bnodePath\x18\a \x01(\tR\bnodePath\x124\n" +
-	"\x15nodeResourceOccupancy\x18\b \x01(\x03R\x15nodeResourceOccupancy2N\n" +
+	"\x15nodeResourceOccupancy\x18\b \x01(\x03R\x15nodeResourceOccupancy2\x97\x01\n" +
 	"\vNodeService\x12?\n" +
-	"\bRegister\x12\x19.node_rpc.RegisterRequest\x1a\x16.node_rpc.BaseResponse\"\x00B\vZ\t/node_rpcb\x06proto3"
+	"\bRegister\x12\x19.node_rpc.RegisterRequest\x1a\x16.node_rpc.BaseResponse\"\x00\x12G\n" +
+	"\fNodeResource\x12\x1d.node_rpc.NodeResourceRequest\x1a\x16.node_rpc.BaseResponse\"\x00B\vZ\t/node_rpcb\x06proto3"
 
 var (
-	file_node_proto_rawDescOnce sync.Once
-	file_node_proto_rawDescData []byte
+	file_internal_rpc_node_proto_rawDescOnce sync.Once
+	file_internal_rpc_node_proto_rawDescData []byte
 )
 
-func file_node_proto_rawDescGZIP() []byte {
-	file_node_proto_rawDescOnce.Do(func() {
-		file_node_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_node_proto_rawDesc), len(file_node_proto_rawDesc)))
+func file_internal_rpc_node_proto_rawDescGZIP() []byte {
+	file_internal_rpc_node_proto_rawDescOnce.Do(func() {
+		file_internal_rpc_node_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_internal_rpc_node_proto_rawDesc), len(file_internal_rpc_node_proto_rawDesc)))
 	})
-	return file_node_proto_rawDescData
+	return file_internal_rpc_node_proto_rawDescData
 }
 
-var file_node_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
-var file_node_proto_goTypes = []any{
-	(*BaseResponse)(nil),      // 0: node_rpc.BaseResponse
-	(*RegisterRequest)(nil),   // 1: node_rpc.RegisterRequest
-	(*SystemInfoMessage)(nil), // 2: node_rpc.systemInfoMessage
-	(*ResourceMessage)(nil),   // 3: node_rpc.resourceMessage
+var file_internal_rpc_node_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_internal_rpc_node_proto_goTypes = []any{
+	(*BaseResponse)(nil),        // 0: node_rpc.BaseResponse
+	(*RegisterRequest)(nil),     // 1: node_rpc.RegisterRequest
+	(*NodeResourceRequest)(nil), // 2: node_rpc.NodeResourceRequest
+	(*SystemInfoMessage)(nil),   // 3: node_rpc.systemInfoMessage
+	(*ResourceMessage)(nil),     // 4: node_rpc.resourceMessage
 }
-var file_node_proto_depIdxs = []int32{
-	2, // 0: node_rpc.RegisterRequest.systemInfo:type_name -> node_rpc.systemInfoMessage
-	3, // 1: node_rpc.RegisterRequest.resourceInfo:type_name -> node_rpc.resourceMessage
-	1, // 2: node_rpc.NodeService.Register:input_type -> node_rpc.RegisterRequest
-	0, // 3: node_rpc.NodeService.Register:output_type -> node_rpc.BaseResponse
-	3, // [3:4] is the sub-list for method output_type
-	2, // [2:3] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+var file_internal_rpc_node_proto_depIdxs = []int32{
+	3, // 0: node_rpc.RegisterRequest.systemInfo:type_name -> node_rpc.systemInfoMessage
+	4, // 1: node_rpc.RegisterRequest.resourceInfo:type_name -> node_rpc.resourceMessage
+	4, // 2: node_rpc.NodeResourceRequest.resourceInfo:type_name -> node_rpc.resourceMessage
+	1, // 3: node_rpc.NodeService.Register:input_type -> node_rpc.RegisterRequest
+	2, // 4: node_rpc.NodeService.NodeResource:input_type -> node_rpc.NodeResourceRequest
+	0, // 5: node_rpc.NodeService.Register:output_type -> node_rpc.BaseResponse
+	0, // 6: node_rpc.NodeService.NodeResource:output_type -> node_rpc.BaseResponse
+	5, // [5:7] is the sub-list for method output_type
+	3, // [3:5] is the sub-list for method input_type
+	3, // [3:3] is the sub-list for extension type_name
+	3, // [3:3] is the sub-list for extension extendee
+	0, // [0:3] is the sub-list for field type_name
 }
 
-func init() { file_node_proto_init() }
-func file_node_proto_init() {
-	if File_node_proto != nil {
+func init() { file_internal_rpc_node_proto_init() }
+func file_internal_rpc_node_proto_init() {
+	if File_internal_rpc_node_proto != nil {
 		return
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_node_proto_rawDesc), len(file_node_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_internal_rpc_node_proto_rawDesc), len(file_internal_rpc_node_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   4,
+			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_node_proto_goTypes,
-		DependencyIndexes: file_node_proto_depIdxs,
-		MessageInfos:      file_node_proto_msgTypes,
+		GoTypes:           file_internal_rpc_node_proto_goTypes,
+		DependencyIndexes: file_internal_rpc_node_proto_depIdxs,
+		MessageInfos:      file_internal_rpc_node_proto_msgTypes,
 	}.Build()
-	File_node_proto = out.File
-	file_node_proto_goTypes = nil
-	file_node_proto_depIdxs = nil
+	File_internal_rpc_node_proto = out.File
+	file_internal_rpc_node_proto_goTypes = nil
+	file_internal_rpc_node_proto_depIdxs = nil
 }

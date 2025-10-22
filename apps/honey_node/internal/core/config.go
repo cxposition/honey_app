@@ -1,17 +1,15 @@
 package core
 
 import (
-	"fmt"
+	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
 	"honey_node/internal/config"
 	"honey_node/internal/flags"
-	"honey_node/internal/global"
 	"os"
 )
 
 func ReadConfig() *config.Config {
-	fmt.Printf("正在读取配置文件 %s", flags.Options.File)
 	byteData, err := os.ReadFile(flags.Options.File)
 	if err != nil {
 		logrus.Fatalf("配置文件读取错误 %s", err)
@@ -21,14 +19,22 @@ func ReadConfig() *config.Config {
 	var c config.Config
 	err = yaml.Unmarshal(byteData, &c)
 	if err != nil {
-		logrus.Fatal("配置文件配置错误 %s", err)
+		logrus.Fatalf("配置文件配置错误 %s", err)
 		return nil
 	}
+	SetDefault(&c)
 	return &c
 }
 
-func SetConfig() {
-	byteData, err := yaml.Marshal(global.Config)
+func SetDefault(c *config.Config) {
+	if c.System.Uid == "" {
+		c.System.Uid = uuid.NewString()
+		SetConfig(c)
+	}
+}
+
+func SetConfig(c *config.Config) {
+	byteData, err := yaml.Marshal(c)
 	if err != nil {
 		logrus.Errorf("配置序列化失败 %s", err)
 		return

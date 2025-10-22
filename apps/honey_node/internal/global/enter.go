@@ -3,6 +3,7 @@ package global
 import (
 	"github.com/sirupsen/logrus"
 	"honey_node/internal/config"
+	"honey_node/internal/rpc/node_rpc"
 )
 
 var (
@@ -16,5 +17,6 @@ var (
 )
 
 var (
-	Log *logrus.Entry
+	Log        *logrus.Entry
+	GrpcClient node_rpc.NodeServiceClient
 )
