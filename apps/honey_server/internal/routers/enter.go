@@ -14,6 +14,7 @@ func Run() {
 	UserRouters(g)
 	CaptchaRouters(g)
 	LogRouters(g)
+	NodeRouters(g)
 	webAddr := global.Config.System.WebAddr
 	r.Run(webAddr)
 }

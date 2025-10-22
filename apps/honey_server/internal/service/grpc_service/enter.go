@@ -26,6 +26,6 @@ func Run() {
 	// 将server结构体注册为gRPC服务
 	node_rpc.RegisterNodeServiceServer(s, &server)
 	logrus.Infof("grpc server running %s", addr)
-	// 开始处理客户端请求。
+	// 开始处理客户端请求
 	err = s.Serve(listen)
 }
