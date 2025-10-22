@@ -24,13 +24,13 @@ func (NodeService) Register(ctx context.Context, request *node_rpc.RegisterReque
 			IP:     request.Ip,
 			Status: 1,
 			SystemInfo: models.NodeSystemInfo{
-				NodeVersion: request.Version,
-				NodeCommit:  request.Commit,
-				//HostName:
-				//DistributionVersion:
-				//CoreVersion:
-				//SystemType:
-				//StartTime:
+				NodeVersion:         request.Version,
+				NodeCommit:          request.Commit,
+				HostName:            request.SystemInfo.HostName,
+				DistributionVersion: request.SystemInfo.DistributionVersion,
+				CoreVersion:         request.SystemInfo.CoreVersion,
+				SystemType:          request.SystemInfo.SystemType,
+				StartTime:           request.SystemInfo.StartTime,
 			},
 		}
 		err1 = global.DB.Create(&model).Error

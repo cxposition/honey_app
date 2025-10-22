@@ -26,7 +26,6 @@ func main() {
 		return
 	}
 
-	logrus.Info("节点注册成功")
 	cron_service.Run()
 	select {}
 
@@ -58,6 +57,8 @@ func register() error {
 		logrus.Errorf("获取系统信息失败：%v", err)
 		return err
 	}
+
+	logrus.Infof("系统信息：%+v", systemInfo)
 
 	// 节点注册
 	_, err = global.GrpcClient.Register(context.Background(), &node_rpc.RegisterRequest{
