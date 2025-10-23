@@ -1,5 +1,10 @@
 package models
 
+import (
+	"github.com/sirupsen/logrus"
+	"gorm.io/gorm"
+)
+
 // NodeModel 节点表
 type NodeModel struct {
 	Model
@@ -13,6 +18,47 @@ type NodeModel struct {
 	// 查资料说必须要加serializer，不然会报错，gorm默认不支持自定义的数据类型序列化和反序列化
 	Resource   NodeResource   `gorm:"serializer:json" json:"resource"`
 	SystemInfo NodeSystemInfo `gorm:"serializer:json" json:"systemInfo"`
+}
+
+func (n *NodeModel) BeforeDelete(tx *gorm.DB) error {
+	// 诱捕转发
+	var list []HoneyPortModel
+	err := tx.Find(&list, "node_id = ?", n.ID).Delete(&list).Error
+	if err != nil {
+		return err
+	}
+	logrus.Infof("关联诱捕转发 %d", len(list))
+
+	// 诱捕ip
+	var ipList []HoneyIpModel
+	err = tx.Find(&list, "node_id = ?", n.ID).Delete(&ipList).Error
+	if err != nil {
+		return err
+	}
+	logrus.Infof("关联诱捕ip %d", len(ipList))
+
+	// 节点网络
+	var netList []NetModel
+	err = tx.Find(&list, "node_id = ?", n.ID).Delete(&netList).Error
+	if err != nil {
+		return err
+	}
+	logrus.Infof("节点网络 %d", len(netList))
+
+	// 节点网卡
+	var networkList []NodeNetworkModel
+	err = tx.Find(&list, "node_id = ?", n.ID).Delete(&networkList).Error
+	if err != nil {
+		return err
+	}
+	logrus.Infof("关联节点网卡 %d", len(networkList))
+
+	// 节点
+	//var list []HoneyPortModel
+	//tx.Find(&list, "node_id = ?", n.ID).Delete(&list)
+	//logrus.Infof("关联诱捕节点 %d", len(list))
+
+	return nil
 }
 
 type NodeResource struct {
