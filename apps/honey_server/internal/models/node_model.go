@@ -35,3 +35,7 @@ type NodeSystemInfo struct {
 	NodeVersion         string `json:"nodeVersion"`
 	NodeCommit          string `json:"nodeCommit"`
 }
+
+type IDRequest struct {
+	ID []uint `json:"id" form:"id" uri:"id"`
+}

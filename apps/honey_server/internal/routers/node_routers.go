@@ -10,4 +10,5 @@ import (
 func NodeRouters(r *gin.RouterGroup) {
 	var app = api.App.NodeApi
 	r.GET("node", middleware.BindQueryMiddleware[models.PageInfo], app.ListView)
+	r.GET("node/:id", middleware.BindUriMiddleware[models.IDRequest], app.DetailView)
 }
