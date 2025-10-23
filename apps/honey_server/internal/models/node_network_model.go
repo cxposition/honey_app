@@ -9,6 +9,6 @@ type NodeNetworkModel struct {
 	IP        string    `json:"ip"`                         // 探针ip
 	Mask      int8      `json:"mask"`                       // 子网掩码 8-32
 	Gateway   string    `json:"gateway"`
-	Status    int8      `json:"status"` // 是否启用
+	Status    int8      `json:"status"` // 是否启用 1 表示启用 2表示未启用
 	NetworkID uint      `json:"networkID"`
 }

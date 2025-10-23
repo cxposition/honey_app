@@ -38,6 +38,26 @@ func (NodeService) Register(ctx context.Context, request *node_rpc.RegisterReque
 			logrus.Errorf("节点创建失败 %s", err1)
 			return nil, errors.New("节点创建失败")
 		}
+
+		// 创建网卡记录
+		var networkList []models.NodeNetworkModel
+		for _, message := range request.NetworkList {
+			networkList = append(networkList, models.NodeNetworkModel{
+				NodeID:  model.ID,
+				Network: message.Network,
+				IP:      message.Ip,
+				Mask:    int8(message.Mask),
+				Status:  2,
+			})
+		}
+
+		if len(networkList) > 0 {
+			err := global.DB.Create(&networkList).Error
+			if err != nil {
+				logrus.Errorf("节点网卡保存失败 %s", err)
+				return nil, errors.New("节点网卡保存失败")
+			}
+		}
 	}
 
 	if model.Status != 1 {

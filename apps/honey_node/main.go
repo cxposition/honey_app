@@ -60,6 +60,22 @@ func register() error {
 
 	logrus.Infof("系统信息：%+v", systemInfo)
 
+	var networkList []*node_rpc.NetworkInfoMessage
+	_networkList, err := info.GetNetworkList("hy-")
+	if err != nil {
+		logrus.Errorf("获取网络信息失败：%v", err)
+		return err
+	}
+
+	for _, networkInfo := range _networkList {
+		networkList = append(networkList, &node_rpc.NetworkInfoMessage{
+			Network: networkInfo.Network,
+			Ip:      networkInfo.Ip,
+			Net:     networkInfo.Net,
+			Mask:    int32(networkInfo.Mask),
+		})
+	}
+
 	// 节点注册
 	_, err = global.GrpcClient.Register(context.Background(), &node_rpc.RegisterRequest{
 		Ip:      _ip,
@@ -74,6 +90,7 @@ func register() error {
 			SystemType:          systemInfo.Arch,
 			StartTime:           systemInfo.BootTime.Format(time.DateTime),
 		},
+		NetworkList: networkList,
 	})
 	if err != nil {
 		logrus.Errorf("节点注册失败：%v", err)
