@@ -13,4 +13,5 @@ func NodeRouters(r *gin.RouterGroup) {
 	r.GET("node", middleware.BindQueryMiddleware[models.PageInfo], app.ListView)
 	r.GET("node/:id", middleware.BindUriMiddleware[models.IDRequest], app.DetailView)
 	r.PUT("node", middleware.BindJsonMiddleware[node_api.UpdateRequest], app.UpdateView)
+	r.GET("node/options", app.OptionsView)
 }
