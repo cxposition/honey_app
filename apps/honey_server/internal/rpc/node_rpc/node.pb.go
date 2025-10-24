@@ -21,6 +21,55 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type CmdType int32
+
+const (
+	CmdType_cmdNetworkFlushType CmdType = 0
+	CmdType_cmdNetScanType      CmdType = 1
+	CmdType_cmdNodeRemoveType   CmdType = 2
+)
+
+// Enum value maps for CmdType.
+var (
+	CmdType_name = map[int32]string{
+		0: "cmdNetworkFlushType",
+		1: "cmdNetScanType",
+		2: "cmdNodeRemoveType",
+	}
+	CmdType_value = map[string]int32{
+		"cmdNetworkFlushType": 0,
+		"cmdNetScanType":      1,
+		"cmdNodeRemoveType":   2,
+	}
+)
+
+func (x CmdType) Enum() *CmdType {
+	p := new(CmdType)
+	*p = x
+	return p
+}
+
+func (x CmdType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (CmdType) Descriptor() protoreflect.EnumDescriptor {
+	return file_internal_rpc_node_proto_enumTypes[0].Descriptor()
+}
+
+func (CmdType) Type() protoreflect.EnumType {
+	return &file_internal_rpc_node_proto_enumTypes[0]
+}
+
+func (x CmdType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use CmdType.Descriptor instead.
+func (CmdType) EnumDescriptor() ([]byte, []int) {
+	return file_internal_rpc_node_proto_rawDescGZIP(), []int{0}
+}
+
 type BaseResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Code          int32                  `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
@@ -470,6 +519,430 @@ func (x *NetworkInfoMessage) GetMask() int32 {
 	return 0
 }
 
+type CmdRequest struct {
+	state                 protoimpl.MessageState `protogen:"open.v1"`
+	CmdType               CmdType                `protobuf:"varint,1,opt,name=cmdType,proto3,enum=node_rpc.CmdType" json:"cmdType,omitempty"`
+	TaskID                string                 `protobuf:"bytes,2,opt,name=taskID,proto3" json:"taskID,omitempty"`
+	NetworkFlushInMessage *NetworkFlushInMessage `protobuf:"bytes,3,opt,name=NetworkFlushInMessage,proto3" json:"NetworkFlushInMessage,omitempty"`
+	NetScanInMessage      *NetScanInMessage      `protobuf:"bytes,4,opt,name=NetScanInMessage,proto3" json:"NetScanInMessage,omitempty"`
+	NodeRemoveInMessage   *NodeRemoveInMessage   `protobuf:"bytes,5,opt,name=NodeRemoveInMessage,proto3" json:"NodeRemoveInMessage,omitempty"`
+	unknownFields         protoimpl.UnknownFields
+	sizeCache             protoimpl.SizeCache
+}
+
+func (x *CmdRequest) Reset() {
+	*x = CmdRequest{}
+	mi := &file_internal_rpc_node_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CmdRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CmdRequest) ProtoMessage() {}
+
+func (x *CmdRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_internal_rpc_node_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CmdRequest.ProtoReflect.Descriptor instead.
+func (*CmdRequest) Descriptor() ([]byte, []int) {
+	return file_internal_rpc_node_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *CmdRequest) GetCmdType() CmdType {
+	if x != nil {
+		return x.CmdType
+	}
+	return CmdType_cmdNetworkFlushType
+}
+
+func (x *CmdRequest) GetTaskID() string {
+	if x != nil {
+		return x.TaskID
+	}
+	return ""
+}
+
+func (x *CmdRequest) GetNetworkFlushInMessage() *NetworkFlushInMessage {
+	if x != nil {
+		return x.NetworkFlushInMessage
+	}
+	return nil
+}
+
+func (x *CmdRequest) GetNetScanInMessage() *NetScanInMessage {
+	if x != nil {
+		return x.NetScanInMessage
+	}
+	return nil
+}
+
+func (x *CmdRequest) GetNodeRemoveInMessage() *NodeRemoveInMessage {
+	if x != nil {
+		return x.NodeRemoveInMessage
+	}
+	return nil
+}
+
+type CmdResponse struct {
+	state                  protoimpl.MessageState  `protogen:"open.v1"`
+	CmdType                CmdType                 `protobuf:"varint,1,opt,name=cmdType,proto3,enum=node_rpc.CmdType" json:"cmdType,omitempty"`
+	TaskID                 string                  `protobuf:"bytes,2,opt,name=taskID,proto3" json:"taskID,omitempty"`
+	NodeID                 string                  `protobuf:"bytes,3,opt,name=nodeID,proto3" json:"nodeID,omitempty"`
+	Code                   int32                   `protobuf:"varint,4,opt,name=code,proto3" json:"code,omitempty"`
+	ErrorMsg               string                  `protobuf:"bytes,5,opt,name=errorMsg,proto3" json:"errorMsg,omitempty"`
+	NetworkFlushOutMessage *NetworkFlushOutMessage `protobuf:"bytes,6,opt,name=NetworkFlushOutMessage,proto3" json:"NetworkFlushOutMessage,omitempty"`
+	NetScanOutMessage      *NetScanOutMessage      `protobuf:"bytes,7,opt,name=NetScanOutMessage,proto3" json:"NetScanOutMessage,omitempty"`
+	NodeRemoveOutMessage   *NodeRemoveOutMessage   `protobuf:"bytes,8,opt,name=NodeRemoveOutMessage,proto3" json:"NodeRemoveOutMessage,omitempty"`
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
+}
+
+func (x *CmdResponse) Reset() {
+	*x = CmdResponse{}
+	mi := &file_internal_rpc_node_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CmdResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CmdResponse) ProtoMessage() {}
+
+func (x *CmdResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_internal_rpc_node_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CmdResponse.ProtoReflect.Descriptor instead.
+func (*CmdResponse) Descriptor() ([]byte, []int) {
+	return file_internal_rpc_node_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *CmdResponse) GetCmdType() CmdType {
+	if x != nil {
+		return x.CmdType
+	}
+	return CmdType_cmdNetworkFlushType
+}
+
+func (x *CmdResponse) GetTaskID() string {
+	if x != nil {
+		return x.TaskID
+	}
+	return ""
+}
+
+func (x *CmdResponse) GetNodeID() string {
+	if x != nil {
+		return x.NodeID
+	}
+	return ""
+}
+
+func (x *CmdResponse) GetCode() int32 {
+	if x != nil {
+		return x.Code
+	}
+	return 0
+}
+
+func (x *CmdResponse) GetErrorMsg() string {
+	if x != nil {
+		return x.ErrorMsg
+	}
+	return ""
+}
+
+func (x *CmdResponse) GetNetworkFlushOutMessage() *NetworkFlushOutMessage {
+	if x != nil {
+		return x.NetworkFlushOutMessage
+	}
+	return nil
+}
+
+func (x *CmdResponse) GetNetScanOutMessage() *NetScanOutMessage {
+	if x != nil {
+		return x.NetScanOutMessage
+	}
+	return nil
+}
+
+func (x *CmdResponse) GetNodeRemoveOutMessage() *NodeRemoveOutMessage {
+	if x != nil {
+		return x.NodeRemoveOutMessage
+	}
+	return nil
+}
+
+type NetworkFlushInMessage struct {
+	state             protoimpl.MessageState `protogen:"open.v1"`
+	FilterNetworkName []string               `protobuf:"bytes,1,rep,name=filterNetworkName,proto3" json:"filterNetworkName,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
+}
+
+func (x *NetworkFlushInMessage) Reset() {
+	*x = NetworkFlushInMessage{}
+	mi := &file_internal_rpc_node_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *NetworkFlushInMessage) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*NetworkFlushInMessage) ProtoMessage() {}
+
+func (x *NetworkFlushInMessage) ProtoReflect() protoreflect.Message {
+	mi := &file_internal_rpc_node_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use NetworkFlushInMessage.ProtoReflect.Descriptor instead.
+func (*NetworkFlushInMessage) Descriptor() ([]byte, []int) {
+	return file_internal_rpc_node_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *NetworkFlushInMessage) GetFilterNetworkName() []string {
+	if x != nil {
+		return x.FilterNetworkName
+	}
+	return nil
+}
+
+type NetworkFlushOutMessage struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	NetworkList   []*NetworkInfoMessage  `protobuf:"bytes,1,rep,name=networkList,proto3" json:"networkList,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *NetworkFlushOutMessage) Reset() {
+	*x = NetworkFlushOutMessage{}
+	mi := &file_internal_rpc_node_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *NetworkFlushOutMessage) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*NetworkFlushOutMessage) ProtoMessage() {}
+
+func (x *NetworkFlushOutMessage) ProtoReflect() protoreflect.Message {
+	mi := &file_internal_rpc_node_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use NetworkFlushOutMessage.ProtoReflect.Descriptor instead.
+func (*NetworkFlushOutMessage) Descriptor() ([]byte, []int) {
+	return file_internal_rpc_node_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *NetworkFlushOutMessage) GetNetworkList() []*NetworkInfoMessage {
+	if x != nil {
+		return x.NetworkList
+	}
+	return nil
+}
+
+type NetScanInMessage struct {
+	state             protoimpl.MessageState `protogen:"open.v1"`
+	FilterNetworkName []string               `protobuf:"bytes,1,rep,name=filterNetworkName,proto3" json:"filterNetworkName,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
+}
+
+func (x *NetScanInMessage) Reset() {
+	*x = NetScanInMessage{}
+	mi := &file_internal_rpc_node_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *NetScanInMessage) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*NetScanInMessage) ProtoMessage() {}
+
+func (x *NetScanInMessage) ProtoReflect() protoreflect.Message {
+	mi := &file_internal_rpc_node_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use NetScanInMessage.ProtoReflect.Descriptor instead.
+func (*NetScanInMessage) Descriptor() ([]byte, []int) {
+	return file_internal_rpc_node_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *NetScanInMessage) GetFilterNetworkName() []string {
+	if x != nil {
+		return x.FilterNetworkName
+	}
+	return nil
+}
+
+type NetScanOutMessage struct {
+	state             protoimpl.MessageState `protogen:"open.v1"`
+	FilterNetworkName []string               `protobuf:"bytes,1,rep,name=filterNetworkName,proto3" json:"filterNetworkName,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
+}
+
+func (x *NetScanOutMessage) Reset() {
+	*x = NetScanOutMessage{}
+	mi := &file_internal_rpc_node_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *NetScanOutMessage) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*NetScanOutMessage) ProtoMessage() {}
+
+func (x *NetScanOutMessage) ProtoReflect() protoreflect.Message {
+	mi := &file_internal_rpc_node_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use NetScanOutMessage.ProtoReflect.Descriptor instead.
+func (*NetScanOutMessage) Descriptor() ([]byte, []int) {
+	return file_internal_rpc_node_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *NetScanOutMessage) GetFilterNetworkName() []string {
+	if x != nil {
+		return x.FilterNetworkName
+	}
+	return nil
+}
+
+type NodeRemoveInMessage struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *NodeRemoveInMessage) Reset() {
+	*x = NodeRemoveInMessage{}
+	mi := &file_internal_rpc_node_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *NodeRemoveInMessage) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*NodeRemoveInMessage) ProtoMessage() {}
+
+func (x *NodeRemoveInMessage) ProtoReflect() protoreflect.Message {
+	mi := &file_internal_rpc_node_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use NodeRemoveInMessage.ProtoReflect.Descriptor instead.
+func (*NodeRemoveInMessage) Descriptor() ([]byte, []int) {
+	return file_internal_rpc_node_proto_rawDescGZIP(), []int{12}
+}
+
+type NodeRemoveOutMessage struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *NodeRemoveOutMessage) Reset() {
+	*x = NodeRemoveOutMessage{}
+	mi := &file_internal_rpc_node_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *NodeRemoveOutMessage) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*NodeRemoveOutMessage) ProtoMessage() {}
+
+func (x *NodeRemoveOutMessage) ProtoReflect() protoreflect.Message {
+	mi := &file_internal_rpc_node_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use NodeRemoveOutMessage.ProtoReflect.Descriptor instead.
+func (*NodeRemoveOutMessage) Descriptor() ([]byte, []int) {
+	return file_internal_rpc_node_proto_rawDescGZIP(), []int{13}
+}
+
 var File_internal_rpc_node_proto protoreflect.FileDescriptor
 
 const file_internal_rpc_node_proto_rawDesc = "" +
@@ -485,14 +958,14 @@ const file_internal_rpc_node_proto_rawDesc = "" +
 	"\aversion\x18\x04 \x01(\tR\aversion\x12\x16\n" +
 	"\x06commit\x18\x05 \x01(\tR\x06commit\x12;\n" +
 	"\n" +
-	"systemInfo\x18\x06 \x01(\v2\x1b.node_rpc.systemInfoMessageR\n" +
+	"systemInfo\x18\x06 \x01(\v2\x1b.node_rpc.SystemInfoMessageR\n" +
 	"systemInfo\x12=\n" +
-	"\fresourceInfo\x18\a \x01(\v2\x19.node_rpc.resourceMessageR\fresourceInfo\x12>\n" +
-	"\vnetworkList\x18\b \x03(\v2\x1c.node_rpc.networkInfoMessageR\vnetworkList\"o\n" +
+	"\fresourceInfo\x18\a \x01(\v2\x19.node_rpc.ResourceMessageR\fresourceInfo\x12>\n" +
+	"\vnetworkList\x18\b \x03(\v2\x1c.node_rpc.NetworkInfoMessageR\vnetworkList\"o\n" +
 	"\x13NodeResourceRequest\x12\x19\n" +
 	"\bnode_uid\x18\x01 \x01(\tR\anodeUid\x12=\n" +
-	"\fresourceInfo\x18\x02 \x01(\v2\x19.node_rpc.resourceMessageR\fresourceInfo\"\xc1\x01\n" +
-	"\x11systemInfoMessage\x12\x1a\n" +
+	"\fresourceInfo\x18\x02 \x01(\v2\x19.node_rpc.ResourceMessageR\fresourceInfo\"\xc1\x01\n" +
+	"\x11SystemInfoMessage\x12\x1a\n" +
 	"\bhostName\x18\x01 \x01(\tR\bhostName\x120\n" +
 	"\x13distributionVersion\x18\x02 \x01(\tR\x13distributionVersion\x12 \n" +
 	"\vcoreVersion\x18\x03 \x01(\tR\vcoreVersion\x12\x1e\n" +
@@ -500,7 +973,7 @@ const file_internal_rpc_node_proto_rawDesc = "" +
 	"systemType\x18\x04 \x01(\tR\n" +
 	"systemType\x12\x1c\n" +
 	"\tstartTime\x18\x05 \x01(\tR\tstartTime\"\x9b\x02\n" +
-	"\x0fresourceMessage\x12\x1a\n" +
+	"\x0fResourceMessage\x12\x1a\n" +
 	"\bcpuCount\x18\x01 \x01(\x03R\bcpuCount\x12\x1e\n" +
 	"\n" +
 	"cpuUseRate\x18\x02 \x01(\x02R\n" +
@@ -513,14 +986,45 @@ const file_internal_rpc_node_proto_rawDesc = "" +
 	"\vdiskUseRate\x18\x06 \x01(\x02R\vdiskUseRate\x12\x1a\n" +
 	"\bnodePath\x18\a \x01(\tR\bnodePath\x124\n" +
 	"\x15nodeResourceOccupancy\x18\b \x01(\x03R\x15nodeResourceOccupancy\"d\n" +
-	"\x12networkInfoMessage\x12\x18\n" +
+	"\x12NetworkInfoMessage\x12\x18\n" +
 	"\anetwork\x18\x01 \x01(\tR\anetwork\x12\x0e\n" +
 	"\x02ip\x18\x02 \x01(\tR\x02ip\x12\x10\n" +
 	"\x03net\x18\x03 \x01(\tR\x03net\x12\x12\n" +
-	"\x04mask\x18\x04 \x01(\x05R\x04mask2\x97\x01\n" +
+	"\x04mask\x18\x04 \x01(\x05R\x04mask\"\xc1\x02\n" +
+	"\n" +
+	"CmdRequest\x12+\n" +
+	"\acmdType\x18\x01 \x01(\x0e2\x11.node_rpc.CmdTypeR\acmdType\x12\x16\n" +
+	"\x06taskID\x18\x02 \x01(\tR\x06taskID\x12U\n" +
+	"\x15NetworkFlushInMessage\x18\x03 \x01(\v2\x1f.node_rpc.NetworkFlushInMessageR\x15NetworkFlushInMessage\x12F\n" +
+	"\x10NetScanInMessage\x18\x04 \x01(\v2\x1a.node_rpc.NetScanInMessageR\x10NetScanInMessage\x12O\n" +
+	"\x13NodeRemoveInMessage\x18\x05 \x01(\v2\x1d.node_rpc.NodeRemoveInMessageR\x13NodeRemoveInMessage\"\x93\x03\n" +
+	"\vCmdResponse\x12+\n" +
+	"\acmdType\x18\x01 \x01(\x0e2\x11.node_rpc.CmdTypeR\acmdType\x12\x16\n" +
+	"\x06taskID\x18\x02 \x01(\tR\x06taskID\x12\x16\n" +
+	"\x06nodeID\x18\x03 \x01(\tR\x06nodeID\x12\x12\n" +
+	"\x04code\x18\x04 \x01(\x05R\x04code\x12\x1a\n" +
+	"\berrorMsg\x18\x05 \x01(\tR\berrorMsg\x12X\n" +
+	"\x16NetworkFlushOutMessage\x18\x06 \x01(\v2 .node_rpc.NetworkFlushOutMessageR\x16NetworkFlushOutMessage\x12I\n" +
+	"\x11NetScanOutMessage\x18\a \x01(\v2\x1b.node_rpc.NetScanOutMessageR\x11NetScanOutMessage\x12R\n" +
+	"\x14NodeRemoveOutMessage\x18\b \x01(\v2\x1e.node_rpc.NodeRemoveOutMessageR\x14NodeRemoveOutMessage\"E\n" +
+	"\x15NetworkFlushInMessage\x12,\n" +
+	"\x11filterNetworkName\x18\x01 \x03(\tR\x11filterNetworkName\"X\n" +
+	"\x16NetworkFlushOutMessage\x12>\n" +
+	"\vnetworkList\x18\x01 \x03(\v2\x1c.node_rpc.NetworkInfoMessageR\vnetworkList\"@\n" +
+	"\x10NetScanInMessage\x12,\n" +
+	"\x11filterNetworkName\x18\x01 \x03(\tR\x11filterNetworkName\"A\n" +
+	"\x11NetScanOutMessage\x12,\n" +
+	"\x11filterNetworkName\x18\x01 \x03(\tR\x11filterNetworkName\"\x15\n" +
+	"\x13NodeRemoveInMessage\"\x16\n" +
+	"\x14NodeRemoveOutMessage*M\n" +
+	"\aCmdType\x12\x17\n" +
+	"\x13cmdNetworkFlushType\x10\x00\x12\x12\n" +
+	"\x0ecmdNetScanType\x10\x01\x12\x15\n" +
+	"\x11cmdNodeRemoveType\x10\x022\xd5\x01\n" +
 	"\vNodeService\x12?\n" +
 	"\bRegister\x12\x19.node_rpc.RegisterRequest\x1a\x16.node_rpc.BaseResponse\"\x00\x12G\n" +
-	"\fNodeResource\x12\x1d.node_rpc.NodeResourceRequest\x1a\x16.node_rpc.BaseResponse\"\x00B\vZ\t/node_rpcb\x06proto3"
+	"\fNodeResource\x12\x1d.node_rpc.NodeResourceRequest\x1a\x16.node_rpc.BaseResponse\"\x00\x12<\n" +
+	"\aCommand\x12\x15.node_rpc.CmdResponse\x1a\x14.node_rpc.CmdRequest\"\x00(\x010\x01B\vZ\t/node_rpcb\x06proto3"
 
 var (
 	file_internal_rpc_node_proto_rawDescOnce sync.Once
@@ -534,29 +1038,50 @@ func file_internal_rpc_node_proto_rawDescGZIP() []byte {
 	return file_internal_rpc_node_proto_rawDescData
 }
 
-var file_internal_rpc_node_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_internal_rpc_node_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_internal_rpc_node_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
 var file_internal_rpc_node_proto_goTypes = []any{
-	(*BaseResponse)(nil),        // 0: node_rpc.BaseResponse
-	(*RegisterRequest)(nil),     // 1: node_rpc.RegisterRequest
-	(*NodeResourceRequest)(nil), // 2: node_rpc.NodeResourceRequest
-	(*SystemInfoMessage)(nil),   // 3: node_rpc.systemInfoMessage
-	(*ResourceMessage)(nil),     // 4: node_rpc.resourceMessage
-	(*NetworkInfoMessage)(nil),  // 5: node_rpc.networkInfoMessage
+	(CmdType)(0),                   // 0: node_rpc.CmdType
+	(*BaseResponse)(nil),           // 1: node_rpc.BaseResponse
+	(*RegisterRequest)(nil),        // 2: node_rpc.RegisterRequest
+	(*NodeResourceRequest)(nil),    // 3: node_rpc.NodeResourceRequest
+	(*SystemInfoMessage)(nil),      // 4: node_rpc.SystemInfoMessage
+	(*ResourceMessage)(nil),        // 5: node_rpc.ResourceMessage
+	(*NetworkInfoMessage)(nil),     // 6: node_rpc.NetworkInfoMessage
+	(*CmdRequest)(nil),             // 7: node_rpc.CmdRequest
+	(*CmdResponse)(nil),            // 8: node_rpc.CmdResponse
+	(*NetworkFlushInMessage)(nil),  // 9: node_rpc.NetworkFlushInMessage
+	(*NetworkFlushOutMessage)(nil), // 10: node_rpc.NetworkFlushOutMessage
+	(*NetScanInMessage)(nil),       // 11: node_rpc.NetScanInMessage
+	(*NetScanOutMessage)(nil),      // 12: node_rpc.NetScanOutMessage
+	(*NodeRemoveInMessage)(nil),    // 13: node_rpc.NodeRemoveInMessage
+	(*NodeRemoveOutMessage)(nil),   // 14: node_rpc.NodeRemoveOutMessage
 }
 var file_internal_rpc_node_proto_depIdxs = []int32{
-	3, // 0: node_rpc.RegisterRequest.systemInfo:type_name -> node_rpc.systemInfoMessage
-	4, // 1: node_rpc.RegisterRequest.resourceInfo:type_name -> node_rpc.resourceMessage
-	5, // 2: node_rpc.RegisterRequest.networkList:type_name -> node_rpc.networkInfoMessage
-	4, // 3: node_rpc.NodeResourceRequest.resourceInfo:type_name -> node_rpc.resourceMessage
-	1, // 4: node_rpc.NodeService.Register:input_type -> node_rpc.RegisterRequest
-	2, // 5: node_rpc.NodeService.NodeResource:input_type -> node_rpc.NodeResourceRequest
-	0, // 6: node_rpc.NodeService.Register:output_type -> node_rpc.BaseResponse
-	0, // 7: node_rpc.NodeService.NodeResource:output_type -> node_rpc.BaseResponse
-	6, // [6:8] is the sub-list for method output_type
-	4, // [4:6] is the sub-list for method input_type
-	4, // [4:4] is the sub-list for extension type_name
-	4, // [4:4] is the sub-list for extension extendee
-	0, // [0:4] is the sub-list for field type_name
+	4,  // 0: node_rpc.RegisterRequest.systemInfo:type_name -> node_rpc.SystemInfoMessage
+	5,  // 1: node_rpc.RegisterRequest.resourceInfo:type_name -> node_rpc.ResourceMessage
+	6,  // 2: node_rpc.RegisterRequest.networkList:type_name -> node_rpc.NetworkInfoMessage
+	5,  // 3: node_rpc.NodeResourceRequest.resourceInfo:type_name -> node_rpc.ResourceMessage
+	0,  // 4: node_rpc.CmdRequest.cmdType:type_name -> node_rpc.CmdType
+	9,  // 5: node_rpc.CmdRequest.NetworkFlushInMessage:type_name -> node_rpc.NetworkFlushInMessage
+	11, // 6: node_rpc.CmdRequest.NetScanInMessage:type_name -> node_rpc.NetScanInMessage
+	13, // 7: node_rpc.CmdRequest.NodeRemoveInMessage:type_name -> node_rpc.NodeRemoveInMessage
+	0,  // 8: node_rpc.CmdResponse.cmdType:type_name -> node_rpc.CmdType
+	10, // 9: node_rpc.CmdResponse.NetworkFlushOutMessage:type_name -> node_rpc.NetworkFlushOutMessage
+	12, // 10: node_rpc.CmdResponse.NetScanOutMessage:type_name -> node_rpc.NetScanOutMessage
+	14, // 11: node_rpc.CmdResponse.NodeRemoveOutMessage:type_name -> node_rpc.NodeRemoveOutMessage
+	6,  // 12: node_rpc.NetworkFlushOutMessage.networkList:type_name -> node_rpc.NetworkInfoMessage
+	2,  // 13: node_rpc.NodeService.Register:input_type -> node_rpc.RegisterRequest
+	3,  // 14: node_rpc.NodeService.NodeResource:input_type -> node_rpc.NodeResourceRequest
+	8,  // 15: node_rpc.NodeService.Command:input_type -> node_rpc.CmdResponse
+	1,  // 16: node_rpc.NodeService.Register:output_type -> node_rpc.BaseResponse
+	1,  // 17: node_rpc.NodeService.NodeResource:output_type -> node_rpc.BaseResponse
+	7,  // 18: node_rpc.NodeService.Command:output_type -> node_rpc.CmdRequest
+	16, // [16:19] is the sub-list for method output_type
+	13, // [13:16] is the sub-list for method input_type
+	13, // [13:13] is the sub-list for extension type_name
+	13, // [13:13] is the sub-list for extension extendee
+	0,  // [0:13] is the sub-list for field type_name
 }
 
 func init() { file_internal_rpc_node_proto_init() }
@@ -569,13 +1094,14 @@ func file_internal_rpc_node_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_internal_rpc_node_proto_rawDesc), len(file_internal_rpc_node_proto_rawDesc)),
-			NumEnums:      0,
-			NumMessages:   6,
+			NumEnums:      1,
+			NumMessages:   14,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_internal_rpc_node_proto_goTypes,
 		DependencyIndexes: file_internal_rpc_node_proto_depIdxs,
+		EnumInfos:         file_internal_rpc_node_proto_enumTypes,
 		MessageInfos:      file_internal_rpc_node_proto_msgTypes,
 	}.Build()
 	File_internal_rpc_node_proto = out.File

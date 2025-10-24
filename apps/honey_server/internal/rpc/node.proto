@@ -10,6 +10,8 @@ service NodeService {
     rpc Register(RegisterRequest) returns (BaseResponse) {}
     // 节点资源检测
     rpc NodeResource(NodeResourceRequest) returns (BaseResponse) {}
+    // 管理下发命令到节点运行
+    rpc Command(stream CmdResponse) returns (stream CmdRequest) {}
 }
 
 message BaseResponse {
@@ -24,24 +26,24 @@ message RegisterRequest {
     string node_uid                         = 3;  // 消息号
     string version                          = 4;
     string commit                           = 5;
-    systemInfoMessage systemInfo            = 6;
-    resourceMessage resourceInfo            = 7;
-    repeated networkInfoMessage networkList = 8;
+    SystemInfoMessage systemInfo            = 6;
+    ResourceMessage resourceInfo            = 7;
+    repeated NetworkInfoMessage networkList = 8;
 }
 
 message NodeResourceRequest {
     string node_uid              = 1;  // 消息号
-    resourceMessage resourceInfo = 2;
+    ResourceMessage resourceInfo = 2;
 }
 
-message systemInfoMessage {
+message SystemInfoMessage {
     string hostName            = 1;
     string distributionVersion = 2;
     string coreVersion         = 3;
     string systemType          = 4;
     string startTime           = 5;
 }
-message resourceMessage {
+message ResourceMessage {
     int64 cpuCount              = 1;
     float cpuUseRate            = 2;
     int64 memTotal              = 3;
@@ -52,11 +54,58 @@ message resourceMessage {
     int64 nodeResourceOccupancy = 8;
 }
 
-message networkInfoMessage {
+message NetworkInfoMessage {
     string network = 1;
     string ip      = 2;
     string net     = 3;
     int32 mask     = 4;
+}
+
+enum CmdType {
+    cmdNetworkFlushType = 0;
+    cmdNetScanType      = 1;
+    cmdNodeRemoveType   = 2;
+}
+
+message CmdRequest {
+    CmdType cmdType                             = 1;
+    string taskID                               = 2;
+    NetworkFlushInMessage NetworkFlushInMessage = 3;
+    NetScanInMessage NetScanInMessage           = 4;
+    NodeRemoveInMessage NodeRemoveInMessage     = 5;
+}
+
+message CmdResponse {
+    CmdType cmdType                               = 1;
+    string taskID                                 = 2;
+    string nodeID                                 = 3;
+    int32 code                                    = 4;
+    string errorMsg                               = 5;
+    NetworkFlushOutMessage NetworkFlushOutMessage = 6;
+    NetScanOutMessage NetScanOutMessage           = 7;
+    NodeRemoveOutMessage NodeRemoveOutMessage     = 8;
+}
+
+message NetworkFlushInMessage {
+    repeated string filterNetworkName = 1;
+}
+
+message NetworkFlushOutMessage {
+    repeated NetworkInfoMessage networkList = 1;
+}
+
+message NetScanInMessage {
+    repeated string filterNetworkName = 1;
+}
+
+message NetScanOutMessage {
+    repeated string filterNetworkName = 1;
+}
+
+message NodeRemoveInMessage {
+}
+
+message NodeRemoveOutMessage {
 }
 
 // protoc --go_out=. --go-grpc_out=. *.proto
