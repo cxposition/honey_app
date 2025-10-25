@@ -36,10 +36,12 @@ func main() {
 }
 
 var CmdResponseChan = make(chan *node_rpc.CmdResponse, 0)
+var Stream node_rpc.NodeService_CommandClient
 
 func command() {
 	ctx := metadata.NewOutgoingContext(context.Background(), metadata.Pairs("NodeID", global.Config.System.Uid))
-	stream, err := global.GrpcClient.Command(ctx)
+	var err error
+	Stream, err = global.GrpcClient.Command(ctx)
 	if err != nil {
 		logrus.Errorf("节点command失败：%v", err)
 		time.Sleep(2 * time.Second)
@@ -49,7 +51,7 @@ func command() {
 
 	go func() {
 		for response := range CmdResponseChan {
-			err := stream.Send(response)
+			err := Stream.Send(response)
 			if err != nil {
 				logrus.Errorf("数据发送失败: %s", err)
 				continue
@@ -58,7 +60,7 @@ func command() {
 	}()
 
 	for {
-		request, err := stream.Recv()
+		request, err := Stream.Recv()
 		if err == io.EOF {
 			logrus.Infof("节点断开")
 			break
