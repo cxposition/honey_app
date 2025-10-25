@@ -4,12 +4,14 @@ import (
 	"context"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
+	"google.golang.org/grpc/metadata"
 	"honey_node/internal/core"
 	"honey_node/internal/global"
 	"honey_node/internal/rpc/node_rpc"
 	"honey_node/internal/service/cron_service"
 	"honey_node/internal/utils/info"
 	"honey_node/internal/utils/ip"
+	"io"
 	"os"
 	"time"
 )
@@ -26,9 +28,77 @@ func main() {
 		return
 	}
 
+	go command()
 	cron_service.Run()
 	select {}
 
+}
+
+var CmdResponseChan = make(chan *node_rpc.CmdResponse, 0)
+
+func command() {
+	ctx := metadata.NewOutgoingContext(context.Background(), metadata.Pairs("NodeID", global.Config.System.Uid))
+	stream, err := global.GrpcClient.Command(ctx)
+	if err != nil {
+		logrus.Errorf("节点command失败：%v", err)
+		time.Sleep(2 * time.Second)
+		command()
+		return
+	}
+
+	go func() {
+		for response := range CmdResponseChan {
+			err := stream.Send(response)
+			if err != nil {
+				logrus.Errorf("数据发送失败: %s", err)
+				continue
+			}
+		}
+	}()
+
+	for {
+		request, err := stream.Recv()
+		if err == io.EOF {
+			logrus.Infof("节点断开")
+			break
+		}
+		if err != nil {
+			logrus.Errorf("节点出错: %s", err)
+			break
+		}
+
+		logrus.Infof("收到命令：%+v", request)
+
+		switch request.CmdType {
+		case node_rpc.CmdType_cmdNetworkFlushType:
+			_networkList, _ := info.GetNetworkList(request.NetworkFlushInMessage.FilterNetworkName[0])
+			if err != nil {
+				logrus.Errorf("获取网络信息失败：%v", err)
+				return
+			}
+
+			var networkList []*node_rpc.NetworkInfoMessage
+			for _, networkInfo := range _networkList {
+				networkList = append(networkList, &node_rpc.NetworkInfoMessage{
+					Network: networkInfo.Network,
+					Ip:      networkInfo.Ip,
+					Net:     networkInfo.Net,
+					Mask:    int32(networkInfo.Mask),
+				})
+			}
+			CmdResponseChan <- &node_rpc.CmdResponse{
+				CmdType: node_rpc.CmdType_cmdNetworkFlushType,
+				TaskID:  "xx",
+				NodeID:  global.Config.System.Uid,
+				NetworkFlushOutMessage: &node_rpc.NetworkFlushOutMessage{
+					NetworkList: networkList,
+				},
+			}
+		}
+	}
+
+	time.Sleep(2 * time.Second)
+	command()
 }
 
 func register() error {

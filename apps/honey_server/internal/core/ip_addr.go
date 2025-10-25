@@ -4,7 +4,7 @@ import (
 	_ "embed"
 	"fmt"
 	"github.com/lionsoul2014/ip2region/binding/golang/xdb"
-	"github.com/sirupsen/logrus"
+	"honey_server/internal/global"
 	"honey_server/internal/utils/ip"
 	"strings"
 )
@@ -17,7 +17,7 @@ var addrDB []byte
 func InitIPDB() {
 	_searcher, err := xdb.NewWithBuffer(addrDB)
 	if err != nil {
-		logrus.Fatalf("ip地址数据库加载失败 %s", err)
+		global.Log.Fatalf("ip地址数据库加载失败 %s", err)
 		return
 	}
 	searcher = _searcher
@@ -30,13 +30,13 @@ func GetIpAddr(_ip string) (addr string) {
 
 	region, err := searcher.SearchByStr(_ip)
 	if err != nil {
-		logrus.Warnf("错误的ip地址 %s", err)
+		global.Log.Warnf("错误的ip地址 %s", err)
 		return "异常地址"
 	}
 	_addrList := strings.Split(region, "|")
 	if len(_addrList) != 5 {
 		// 会有这个情况吗？
-		logrus.Warnf("异常的ip地址 %s", _ip)
+		global.Log.Warnf("异常的ip地址 %s", _ip)
 		return "未知地址"
 	}
 	// _addrList 五个部分

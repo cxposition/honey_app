@@ -1,7 +1,6 @@
 package core
 
 import (
-	"github.com/sirupsen/logrus"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"honey_server/internal/global"
@@ -20,18 +19,18 @@ func InitDB() (database *gorm.DB) {
 		DisableForeignKeyConstraintWhenMigrating: true, // 不生成实体外键
 	})
 	if err != nil {
-		logrus.Fatalf("数据库连接失败 %s", err)
+		global.Log.Fatalf("数据库连接失败 %s", err)
 		return
 	}
 	// 配置连接池
 	sqlDB, err := database.DB()
 	if err != nil {
-		logrus.Fatalf("获取数据库连接失败 %s", err)
+		global.Log.Fatalf("获取数据库连接失败 %s", err)
 		return
 	}
 	err = sqlDB.Ping()
 	if err != nil {
-		logrus.Fatalf("数据库连接失败 %s", err)
+		global.Log.Fatalf("数据库连接失败 %s", err)
 		return
 	}
 	// 设置连接池
@@ -54,7 +53,7 @@ func InitDB() (database *gorm.DB) {
 	sqlDB.SetMaxIdleConns(maxIdleConns)
 	sqlDB.SetMaxOpenConns(maxOpenConns)
 	sqlDB.SetConnMaxLifetime(time.Duration(connMaxLifetime) * time.Second)
-	logrus.Infof("mysql连接成功")
+	global.Log.Infof("mysql连接成功")
 	return
 }
 

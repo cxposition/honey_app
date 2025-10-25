@@ -3,7 +3,6 @@ package core
 import (
 	"context"
 	"github.com/redis/go-redis/v9"
-	"github.com/sirupsen/logrus"
 	"honey_server/internal/global"
 	"sync"
 )
@@ -21,10 +20,10 @@ func InitRedis() (client *redis.Client) {
 
 	_, err := rdb.Ping(context.Background()).Result()
 	if err != nil {
-		logrus.Fatalf("连接redis失败 %s", err)
+		global.Log.Fatalf("连接redis失败 %s", err)
 		return
 	}
-	logrus.Infof("成功连接redis")
+	global.Log.Infof("成功连接redis")
 	return rdb
 }
 

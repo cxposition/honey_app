@@ -18,7 +18,7 @@ func ReadConfig() *config.Config {
 	var c config.Config
 	err = yaml.Unmarshal(byteData, &c)
 	if err != nil {
-		logrus.Fatal("配置文件配置错误 %s", err)
+		logrus.Fatalf("配置文件配置错误 %s", err)
 		return nil
 	}
 	return &c

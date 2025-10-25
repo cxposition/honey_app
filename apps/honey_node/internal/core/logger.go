@@ -141,10 +141,11 @@ func GetLogger() *logrus.Entry {
 	}
 	logger.SetLevel(level)
 	logger.AddHook(&MyHook{logPath: "logs"})
+
 	if l.Format == "json" {
 		logger.SetFormatter(&logrus.JSONFormatter{TimestampFormat: time.DateTime})
 	} else {
-		logrus.SetFormatter(&MyLog{})
+		logger.SetFormatter(&MyLog{})
 	}
 
 	logger.SetReportCaller(true)

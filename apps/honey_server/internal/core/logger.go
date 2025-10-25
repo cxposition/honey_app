@@ -144,7 +144,7 @@ func GetLogger() *logrus.Entry {
 	if l.Format == "json" {
 		logger.SetFormatter(&logrus.JSONFormatter{TimestampFormat: time.DateTime})
 	} else {
-		logrus.SetFormatter(&MyLog{})
+		logger.SetFormatter(&MyLog{})
 	}
 
 	logger.SetReportCaller(true)
