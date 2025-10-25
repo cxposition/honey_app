@@ -10,6 +10,7 @@ import (
 
 func main() {
 	global.Config = core.ReadConfig()
+	core.SetLogDefault()
 	global.Log = core.GetLogger()
 	core.InitIPDB()
 	global.DB = core.GetDB()

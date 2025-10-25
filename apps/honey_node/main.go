@@ -18,6 +18,7 @@ import (
 
 func main() {
 	global.Config = core.ReadConfig()
+	core.SetLogDefault()
 	global.Log = core.GetLogger()
 	logrus.Infof("启动成功，版本：%s, 提交：%s", global.Version, global.Commit)
 	global.GrpcClient = core.GetGrpcClient()
@@ -71,7 +72,7 @@ func command() {
 
 		switch request.CmdType {
 		case node_rpc.CmdType_cmdNetworkFlushType:
-			_networkList, _ := info.GetNetworkList(request.NetworkFlushInMessage.FilterNetworkName[0])
+			_networkList, err := info.GetNetworkList(request.NetworkFlushInMessage.FilterNetworkName[0])
 			if err != nil {
 				logrus.Errorf("获取网络信息失败：%v", err)
 				return

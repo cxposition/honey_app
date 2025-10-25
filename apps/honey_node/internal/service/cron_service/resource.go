@@ -2,7 +2,7 @@ package cron_service
 
 import (
 	"context"
-	"github.com/sirupsen/global.Log"
+	"github.com/sirupsen/logrus"
 	"honey_node/internal/global"
 	"honey_node/internal/rpc/node_rpc"
 	"honey_node/internal/utils/info"
@@ -10,13 +10,13 @@ import (
 
 func Resource() {
 	if global.GrpcClient == nil {
-		global.Log.Errorf("管理未连接，放弃上报")
+		logrus.Errorf("管理未连接，放弃上报")
 		return
 	}
 
 	resourceInfo, err := info.GetSystemResource()
 	if err != nil {
-		global.Log.Fatalln(err)
+		logrus.Fatalln(err)
 	}
 
 	_, err = global.GrpcClient.NodeResource(context.Background(), &node_rpc.NodeResourceRequest{
@@ -33,7 +33,7 @@ func Resource() {
 		},
 	})
 	if err != nil {
-		global.Log.Errorf("上报资源信息失败：%s", err)
+		logrus.Errorf("上报资源信息失败：%s", err)
 	}
-	global.Log.Infof("上报资源信息成功")
+	logrus.Infof("上报资源信息成功")
 }

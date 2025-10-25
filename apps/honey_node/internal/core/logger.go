@@ -41,7 +41,7 @@ func (MyLog) Format(entry *logrus.Entry) ([]byte, error) {
 	} else {
 		b = &bytes.Buffer{}
 	}
-	//自定义日期格式
+	// 自定义日期格式
 	timestamp := entry.Time.Format(time.DateTime)
 	if entry.HasCaller() {
 		//自定义文件路径
@@ -149,5 +149,13 @@ func GetLogger() *logrus.Entry {
 	}
 
 	logger.SetReportCaller(true)
-	return logger.WithField("appName", "xxx")
+	return logger.WithField("appName", l.AppName)
+}
+
+func SetLogDefault() {
+	l := global.Config.Logger
+	logrus.SetFormatter(&MyLog{})
+	logrus.SetReportCaller(true)
+	logrus.AddHook(&MyHook{logPath: "logs"})
+	logrus.WithField("appName", l.AppName)
 }
