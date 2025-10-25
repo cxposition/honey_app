@@ -150,3 +150,11 @@ func GetLogger() *logrus.Entry {
 	logger.SetReportCaller(true)
 	return logger.WithField("appName", "xxx")
 }
+
+func SetLogDefault() {
+	l := global.Config.Logger
+	logrus.SetFormatter(&MyLog{})
+	logrus.SetReportCaller(true)
+	logrus.AddHook(&MyHook{logPath: "logs"})
+	logrus.WithField("appName", l.AppName)
+}

@@ -12,6 +12,7 @@ func main() {
 	core.InitIPDB()
 	global.Config = core.ReadConfig()
 	global.Log = core.GetLogger()
+	core.SetLogDefault()
 	global.DB = core.GetDB()
 	global.Redis = core.GetRedis()
 	global.DockerClient = core.InitDocker()
