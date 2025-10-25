@@ -91,7 +91,7 @@ func command() {
 			}
 			CmdResponseChan <- &node_rpc.CmdResponse{
 				CmdType: node_rpc.CmdType_cmdNetworkFlushType,
-				TaskID:  "xx",
+				TaskID:  request.TaskID,
 				NodeID:  global.Config.System.Uid,
 				NetworkFlushOutMessage: &node_rpc.NetworkFlushOutMessage{
 					NetworkList: networkList,
