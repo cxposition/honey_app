@@ -27,6 +27,7 @@ const (
 	CmdType_cmdNetworkFlushType CmdType = 0
 	CmdType_cmdNetScanType      CmdType = 1
 	CmdType_cmdNodeRemoveType   CmdType = 2
+	CmdType_cmdPingType         CmdType = 3
 )
 
 // Enum value maps for CmdType.
@@ -35,11 +36,13 @@ var (
 		0: "cmdNetworkFlushType",
 		1: "cmdNetScanType",
 		2: "cmdNodeRemoveType",
+		3: "cmdPingType",
 	}
 	CmdType_value = map[string]int32{
 		"cmdNetworkFlushType": 0,
 		"cmdNetScanType":      1,
 		"cmdNodeRemoveType":   2,
+		"cmdPingType":         3,
 	}
 )
 
@@ -1016,11 +1019,12 @@ const file_internal_rpc_node_proto_rawDesc = "" +
 	"\x11NetScanOutMessage\x12,\n" +
 	"\x11filterNetworkName\x18\x01 \x03(\tR\x11filterNetworkName\"\x15\n" +
 	"\x13NodeRemoveInMessage\"\x16\n" +
-	"\x14NodeRemoveOutMessage*M\n" +
+	"\x14NodeRemoveOutMessage*^\n" +
 	"\aCmdType\x12\x17\n" +
 	"\x13cmdNetworkFlushType\x10\x00\x12\x12\n" +
 	"\x0ecmdNetScanType\x10\x01\x12\x15\n" +
-	"\x11cmdNodeRemoveType\x10\x022\xd5\x01\n" +
+	"\x11cmdNodeRemoveType\x10\x02\x12\x0f\n" +
+	"\vcmdPingType\x10\x032\xd5\x01\n" +
 	"\vNodeService\x12?\n" +
 	"\bRegister\x12\x19.node_rpc.RegisterRequest\x1a\x16.node_rpc.BaseResponse\"\x00\x12G\n" +
 	"\fNodeResource\x12\x1d.node_rpc.NodeResourceRequest\x1a\x16.node_rpc.BaseResponse\"\x00\x12<\n" +

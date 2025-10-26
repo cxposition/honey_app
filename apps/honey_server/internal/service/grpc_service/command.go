@@ -76,7 +76,7 @@ func (NodeService) Command(stream node_rpc.NodeService_CommandServer) error {
 		if chVal, ok := cmd.ResMap.Load(resp.TaskID); ok {
 			ch := chVal.(chan *node_rpc.CmdResponse)
 			select {
-			case ch <- resp:
+			case ch <- resp: // 匹配好结果后将结果发送到对应通道
 			default:
 				logrus.Warnf("节点 %s 的 task %s 响应通道已满", nodeID, resp.TaskID)
 			}

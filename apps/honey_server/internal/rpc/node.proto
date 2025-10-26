@@ -65,6 +65,7 @@ enum CmdType {
     cmdNetworkFlushType = 0;
     cmdNetScanType      = 1;
     cmdNodeRemoveType   = 2;
+    cmdPingType         = 3;
 }
 
 message CmdRequest {

@@ -17,92 +17,187 @@ import (
 )
 
 func main() {
+	// 1. 初始化配置与日志
 	global.Config = core.ReadConfig()
 	core.SetLogDefault()
 	global.Log = core.GetLogger()
 	logrus.Infof("启动成功，版本：%s, 提交：%s", global.Version, global.Commit)
+
+	// 2. 初始化 gRPC 客户端
 	global.GrpcClient = core.GetGrpcClient()
 
-	err := register()
-	if err != nil {
-		logrus.Errorf("节点注册失败：%v", err)
-		return
+	// 3. 注册节点
+	if err := register(); err != nil {
+		logrus.Fatalf("节点注册失败：%v", err)
 	}
 
-	go command()
+	// 4. 启动命令监听与任务调度
+	go runCommandLoop()
 	cron_service.Run()
-	select {}
 
+	// 5. 阻塞主线程
+	select {}
 }
 
-var CmdResponseChan = make(chan *node_rpc.CmdResponse, 0)
-var Stream node_rpc.NodeService_CommandClient
+// ============================
+// Command Stream 主循环（带重连机制）
+// ============================
 
-func command() {
-	ctx := metadata.NewOutgoingContext(context.Background(), metadata.Pairs("NodeID", global.Config.System.Uid))
-	var err error
-	Stream, err = global.GrpcClient.Command(ctx)
-	if err != nil {
-		logrus.Errorf("节点command失败：%v", err)
-		time.Sleep(2 * time.Second)
-		command()
-		return
+func runCommandLoop() {
+	var backoff = time.Second * 2
+
+	for {
+		// 每次重连前都重新初始化 gRPC 客户端
+		global.GrpcClient = core.GetGrpcClient()
+
+		// 节点重新注册，防止管理端重启后丢失注册信息
+		if err := register(); err != nil {
+			logrus.Errorf("节点注册失败：%v", err)
+			time.Sleep(backoff)
+			continue
+		}
+
+		// 启动命令会话
+		if err := startCommandSession(); err != nil {
+			logrus.Errorf("command 会话出错：%v", err)
+		}
+
+		logrus.Warnf("command 会话断开，%v 秒后重连...", backoff.Seconds())
+		time.Sleep(backoff)
+
+		// 指数回退，最大 1 分钟
+		if backoff < time.Minute {
+			backoff *= 2
+		}
 	}
+}
 
+// ============================
+// 单次 Command 会话逻辑
+// ============================
+
+func startCommandSession() error {
+	ctx := metadata.NewOutgoingContext(context.Background(),
+		metadata.Pairs("NodeID", global.Config.System.Uid))
+
+	stream, err := global.GrpcClient.Command(ctx)
+	if err != nil {
+		return err
+	}
+	logrus.Infof("✅ command 通道建立成功")
+
+	respChan := make(chan *node_rpc.CmdResponse, 16)
+	defer close(respChan)
+
+	// 异步发送响应协程
+	done := make(chan struct{})
 	go func() {
-		for response := range CmdResponseChan {
-			err := Stream.Send(response)
-			if err != nil {
-				logrus.Errorf("数据发送失败: %s", err)
-				continue
+		defer close(done)
+		for resp := range respChan {
+			if err := stream.Send(resp); err != nil {
+				logrus.Errorf("❌ 发送到服务端失败: %v", err)
+				return
 			}
 		}
 	}()
 
+	// 心跳协程，维持长连接
+	go func() {
+		ticker := time.NewTicker(30 * time.Second)
+		defer ticker.Stop()
+
+		for {
+			select {
+			case <-done:
+				return
+			case <-ticker.C:
+				resp := &node_rpc.CmdResponse{
+					CmdType: node_rpc.CmdType_cmdPingType,
+					NodeID:  global.Config.System.Uid,
+				}
+				select {
+				case respChan <- resp:
+				default:
+					logrus.Warn("⚠️ 心跳通道阻塞，丢弃一次心跳包")
+				}
+			}
+		}
+	}()
+
+	// 接收命令主循环
 	for {
-		request, err := Stream.Recv()
+		req, err := stream.Recv()
 		if err == io.EOF {
-			logrus.Infof("节点断开")
+			logrus.Info("🔌 服务器主动关闭 command 流")
 			break
 		}
 		if err != nil {
-			logrus.Errorf("节点出错: %s", err)
+			logrus.Errorf("command 流接收错误: %v", err)
 			break
 		}
 
-		logrus.Infof("收到命令：%+v", request)
+		logrus.Infof("📩 收到命令: %+v", req)
 
-		switch request.CmdType {
+		switch req.CmdType {
 		case node_rpc.CmdType_cmdNetworkFlushType:
-			_networkList, err := info.GetNetworkList(request.NetworkFlushInMessage.FilterNetworkName[0])
-			if err != nil {
-				logrus.Errorf("获取网络信息失败：%v", err)
-				return
-			}
-
-			var networkList []*node_rpc.NetworkInfoMessage
-			for _, networkInfo := range _networkList {
-				networkList = append(networkList, &node_rpc.NetworkInfoMessage{
-					Network: networkInfo.Network,
-					Ip:      networkInfo.Ip,
-					Net:     networkInfo.Net,
-					Mask:    int32(networkInfo.Mask),
-				})
-			}
-			CmdResponseChan <- &node_rpc.CmdResponse{
-				CmdType: node_rpc.CmdType_cmdNetworkFlushType,
-				TaskID:  request.TaskID,
-				NodeID:  global.Config.System.Uid,
-				NetworkFlushOutMessage: &node_rpc.NetworkFlushOutMessage{
-					NetworkList: networkList,
-				},
-			}
+			handleNetworkFlush(req, respChan)
+		default:
+			logrus.Warnf("⚠️ 未知命令类型: %v", req.CmdType)
 		}
 	}
 
-	time.Sleep(2 * time.Second)
-	command()
+	// 等待发送协程退出
+	<-done
+	logrus.Info("🔁 command 会话退出")
+	return nil
 }
+
+// ============================
+// 命令处理逻辑
+// ============================
+
+func handleNetworkFlush(req *node_rpc.CmdRequest, respChan chan *node_rpc.CmdResponse) {
+	if len(req.NetworkFlushInMessage.FilterNetworkName) == 0 {
+		logrus.Warn("⚠️ 命令参数为空")
+		return
+	}
+	name := req.NetworkFlushInMessage.FilterNetworkName[0]
+
+	list, err := info.GetNetworkList(name)
+	if err != nil {
+		logrus.Errorf("获取网络信息失败：%v", err)
+		return
+	}
+
+	var outList []*node_rpc.NetworkInfoMessage
+	for _, n := range list {
+		outList = append(outList, &node_rpc.NetworkInfoMessage{
+			Network: n.Network,
+			Ip:      n.Ip,
+			Net:     n.Net,
+			Mask:    int32(n.Mask),
+		})
+	}
+
+	resp := &node_rpc.CmdResponse{
+		CmdType: node_rpc.CmdType_cmdNetworkFlushType,
+		TaskID:  req.TaskID,
+		NodeID:  global.Config.System.Uid,
+		NetworkFlushOutMessage: &node_rpc.NetworkFlushOutMessage{
+			NetworkList: outList,
+		},
+	}
+
+	select {
+	case respChan <- resp:
+	default:
+		logrus.Warn("⚠️ 响应通道已满，丢弃响应")
+	}
+}
+
+// ============================
+// 节点注册逻辑
+// ============================
 
 func register() error {
 	if global.Config.System.Uid == "" {
@@ -110,47 +205,34 @@ func register() error {
 		core.SetConfig(global.Config)
 	}
 
-	// 初始化客户端
 	_ip, mac, err := ip.GetNetworkInfo(global.Config.System.Network)
 	if err != nil {
-		logrus.Errorf("获取网络信息失败：%v", err)
 		return err
 	}
 
-	// 拿到主机名
-	hostName, err := os.Hostname()
+	hostName, _ := os.Hostname()
+	sysInfo, err := info.GetSystemInfo()
 	if err != nil {
-		logrus.Errorf("获取主机名失败：%v", err)
 		return err
 	}
 
-	// 获取系统信息
-	systemInfo, err := info.GetSystemInfo()
-	if err != nil {
-		logrus.Errorf("获取系统信息失败：%v", err)
-		return err
-	}
-
-	logrus.Infof("系统信息：%+v", systemInfo)
+	logrus.Infof("🖥️ 系统信息: %+v", sysInfo)
 
 	var networkList []*node_rpc.NetworkInfoMessage
-	_networkList, err := info.GetNetworkList("hy-")
+	list, err := info.GetNetworkList("hy-")
 	if err != nil {
-		logrus.Errorf("获取网络信息失败：%v", err)
 		return err
 	}
-
-	for _, networkInfo := range _networkList {
+	for _, n := range list {
 		networkList = append(networkList, &node_rpc.NetworkInfoMessage{
-			Network: networkInfo.Network,
-			Ip:      networkInfo.Ip,
-			Net:     networkInfo.Net,
-			Mask:    int32(networkInfo.Mask),
+			Network: n.Network,
+			Ip:      n.Ip,
+			Net:     n.Net,
+			Mask:    int32(n.Mask),
 		})
 	}
 
-	// 节点注册
-	_, err = global.GrpcClient.Register(context.Background(), &node_rpc.RegisterRequest{
+	req := &node_rpc.RegisterRequest{
 		Ip:      _ip,
 		Mac:     mac,
 		NodeUid: global.Config.System.Uid,
@@ -158,17 +240,18 @@ func register() error {
 		Commit:  global.Commit,
 		SystemInfo: &node_rpc.SystemInfoMessage{
 			HostName:            hostName,
-			DistributionVersion: systemInfo.Distribution,
-			CoreVersion:         systemInfo.KernelVersion,
-			SystemType:          systemInfo.Arch,
-			StartTime:           systemInfo.BootTime.Format(time.DateTime),
+			DistributionVersion: sysInfo.Distribution,
+			CoreVersion:         sysInfo.KernelVersion,
+			SystemType:          sysInfo.Arch,
+			StartTime:           sysInfo.BootTime.Format(time.DateTime),
 		},
 		NetworkList: networkList,
-	})
-	if err != nil {
-		logrus.Errorf("节点注册失败：%v", err)
+	}
+
+	if _, err := global.GrpcClient.Register(context.Background(), req); err != nil {
 		return err
 	}
-	logrus.Infof("节点注册成功")
+
+	logrus.Info("✅ 节点注册成功")
 	return nil
 }
