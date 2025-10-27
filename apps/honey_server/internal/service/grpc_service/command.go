@@ -64,6 +64,7 @@ func (NodeService) Command(stream node_rpc.NodeService_CommandServer) error {
 	// 接收循环
 	for {
 		resp, err := stream.Recv()
+		logrus.Infof("节点 %s 接收到命令: %+v", nodeID, resp)
 		if err == io.EOF {
 			break
 		}
@@ -76,7 +77,8 @@ func (NodeService) Command(stream node_rpc.NodeService_CommandServer) error {
 		if chVal, ok := cmd.ResMap.Load(resp.TaskID); ok {
 			ch := chVal.(chan *node_rpc.CmdResponse)
 			select {
-			case ch <- resp: // 匹配好结果后将结果发送到对应通道
+			case ch <- resp: // 匹配好结果后将结果发送到对应通道,相当于向respChan中发消息
+				logrus.Infof("节点 %s 的 task %s 响应已发送", nodeID, resp.TaskID)
 			default:
 				logrus.Warnf("节点 %s 的 task %s 响应通道已满", nodeID, resp.TaskID)
 			}

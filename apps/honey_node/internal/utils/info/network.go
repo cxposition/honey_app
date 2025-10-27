@@ -39,9 +39,9 @@ func GetNetworkList(filterNetworkName string) (list []NetworkInfo, err error) {
 				continue
 			}
 
-			if ip.To4() == nil {
-				continue
-			}
+			//if ip.To4() == nil {
+			//	continue
+			//}
 
 			mask, _ := _net.Mask.Size()
 			list = append(list, NetworkInfo{
