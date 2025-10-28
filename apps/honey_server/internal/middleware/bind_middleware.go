@@ -20,7 +20,7 @@ func BindQueryMiddleware[T any](c *gin.Context) {
 	var cr T
 	err := c.ShouldBindQuery(&cr)
 	if err != nil {
-		res.FailWithMsg("参数绑定错误", c)
+		res.FailWithError(err, c)
 		c.Abort()
 		return
 	}
@@ -31,7 +31,7 @@ func BindUriMiddleware[T any](c *gin.Context) {
 	var cr T
 	err := c.ShouldBind(&cr)
 	if err != nil {
-		res.FailWithMsg("参数绑定错误", c)
+		res.FailWithError(err, c)
 		c.Abort()
 		return
 	}
