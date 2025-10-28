@@ -7,3 +7,7 @@ system:
   network: "ens33"
   uid:
 #  webAddr: "127.0.0.1:8089"                    # web的运行地址
+filterNetworkList:
+  - br-
+  - docker
+  - mc_

@@ -12,7 +12,7 @@ type NetworkInfo struct {
 	Net     string
 }
 
-func GetNetworkList(filterNetworkName string) (list []NetworkInfo, err error) {
+func GetNetworkList(filterNetworkList []string) (list []NetworkInfo, err error) {
 	faces, err := net.Interfaces()
 	if err != nil {
 		return
@@ -23,8 +23,17 @@ func GetNetworkList(filterNetworkName string) (list []NetworkInfo, err error) {
 		if faceName == "lo" {
 			continue
 		}
+
+		var isFilter bool
 		// 过滤掉诱捕ip的网卡
-		if strings.HasPrefix(faceName, filterNetworkName) {
+		for _, s := range filterNetworkList {
+			if strings.HasPrefix(faceName, s) {
+				isFilter = true
+				break
+			}
+		}
+
+		if isFilter {
 			continue
 		}
 

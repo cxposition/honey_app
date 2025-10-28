@@ -3,8 +3,9 @@ package config
 import "fmt"
 
 type Config struct {
-	Logger Logger `yaml:"logger"`
-	System System `yaml:"system"`
+	Logger            Logger   `yaml:"logger"`
+	System            System   `yaml:"system"`
+	FilterNetworkList []string `yaml:"filterNetworkList"`
 }
 
 type DB struct {

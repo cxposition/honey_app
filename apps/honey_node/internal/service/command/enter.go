@@ -39,7 +39,7 @@ func Register() error {
 	logrus.Infof("🖥️ 系统信息: %+v", sysInfo)
 
 	var networkList []*node_rpc.NetworkInfoMessage
-	list, err := info.GetNetworkList("hy-")
+	list, err := info.GetNetworkList([]string{"hy-"})
 	if err != nil {
 		return err
 	}
@@ -200,7 +200,7 @@ func HandleNetworkFlush(req *node_rpc.CmdRequest, respChan chan *node_rpc.CmdRes
 	}
 	name := req.NetworkFlushInMessage.FilterNetworkName[0]
 
-	list, err := info.GetNetworkList(name)
+	list, err := info.GetNetworkList([]string{name})
 	if err != nil {
 		logrus.Errorf("获取网络信息失败：%v", err)
 		return

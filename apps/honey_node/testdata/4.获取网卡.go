@@ -6,6 +6,6 @@ import (
 )
 
 func main() {
-	list, err := info.GetNetworkList("br")
+	list, err := info.GetNetworkList([]string{"br-"})
 	fmt.Println(list, err)
 }
