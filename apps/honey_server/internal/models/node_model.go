@@ -83,5 +83,5 @@ type NodeSystemInfo struct {
 }
 
 type IDRequest struct {
-	ID []uint `json:"id" form:"id" uri:"id"`
+	ID uint `json:"id" uri:"id" form:"id"`
 }

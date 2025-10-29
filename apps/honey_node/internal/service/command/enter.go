@@ -39,7 +39,7 @@ func Register() error {
 	logrus.Infof("🖥️ 系统信息: %+v", sysInfo)
 
 	var networkList []*node_rpc.NetworkInfoMessage
-	list, err := info.GetNetworkList([]string{"hy-"})
+	list, err := info.GetNetworkList(global.Config.FilterNetworkList)
 	if err != nil {
 		return err
 	}

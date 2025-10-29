@@ -14,4 +14,5 @@ func NodeNetworkRouters(r *gin.RouterGroup) {
 	r.GET("node_network", middleware.BindQueryMiddleware[node_network_api.ListRequest], app.ListView)
 	r.PUT("node_network", middleware.BindJsonMiddleware[node_network_api.UpdateRequest], app.UpdateView)
 	r.PUT("node_network/enable", middleware.BindJsonMiddleware[models.IDRequest], app.EnableView)
+	r.DELETE("node_network/:id", middleware.BindUriMiddleware[models.IDRequest], app.RemoveView)
 }
