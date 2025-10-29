@@ -47,14 +47,12 @@ func (n *NodeNetworkApi) EnableView(c *gin.Context) {
 
 		// 往主机表中添加记录
 		var host = models.HostModel{
-			NodeID:   model.NodeID,
-			NetID:    net.ID,
-			NetModel: models.NetModel{},
-			IP:       net.IP,
+			NodeID: model.NodeID,
+			NetID:  net.ID,
+			IP:     net.IP,
 		}
 		err = tx.Create(&host).Error
 		if err != nil {
-			res.FailWithMsg("主机记录添加失败", c)
 			return err
 		}
 
@@ -66,6 +64,5 @@ func (n *NodeNetworkApi) EnableView(c *gin.Context) {
 		logrus.Errorf("网卡启用失败: %s", err)
 		return
 	}
-	err = global.DB.Create(&models.NodeNetworkModel{}).Error
 	res.OkWithMsg("网卡启用成功", c)
 }

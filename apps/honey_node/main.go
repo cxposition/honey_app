@@ -15,18 +15,12 @@ func main() {
 	global.Log = core.GetLogger()
 	logrus.Infof("启动成功，版本：%s, 提交：%s", global.Version, global.Commit)
 
-	// 2. 初始化 gRPC 客户端
-	global.GrpcClient = core.GetGrpcClient()
-
-	// 3. 注册节点
-	if err := command.Register(); err != nil {
-		logrus.Fatalf("节点注册失败：%v", err)
-	}
-
-	// 4. 启动命令监听与任务调度
+	// 2. 启动节点注册与命令循环（包含 gRPC 自动重连）
 	go command.RunCommandLoop()
-	cron_service.Run()
 
-	// 5. 阻塞主线程
+	// 3. 启动定时任务（资源上报）
+	go cron_service.Run()
+
+	// 4. 阻塞主线程，防止退出
 	select {}
 }

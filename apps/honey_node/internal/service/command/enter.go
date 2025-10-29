@@ -81,28 +81,34 @@ func Register() error {
 // ============================
 
 func RunCommandLoop() {
-	var backoff = time.Second * 2
+	var backoff = 2 * time.Second
 
 	for {
-		// 每次重连前都重新初始化 gRPC 客户端
-		global.GrpcClient = core.GetGrpcClient()
+		client, err := core.GetGrpcClient()
+		if err != nil {
+			logrus.Errorf("无法初始化 gRPC 客户端，%v 秒后重试: %v", backoff.Seconds(), err)
+			time.Sleep(backoff)
+			if backoff < time.Minute {
+				backoff *= 2
+			}
+			continue
+		}
+		global.GrpcClient = client
 
-		// 节点重新注册，防止管理端重启后丢失注册信息
+		// 节点注册
 		if err := Register(); err != nil {
-			logrus.Errorf("节点注册失败：%v", err)
+			logrus.Errorf("节点注册失败: %v", err)
 			time.Sleep(backoff)
 			continue
 		}
 
-		// 启动命令会话
+		// 启动命令流
 		if err := StartCommandSession(); err != nil {
-			logrus.Errorf("command 会话出错：%v", err)
+			logrus.Errorf("command 会话出错: %v", err)
 		}
 
 		logrus.Warnf("command 会话断开，%v 秒后重连...", backoff.Seconds())
 		time.Sleep(backoff)
-
-		// 指数回退，最大 1 分钟
 		if backoff < time.Minute {
 			backoff *= 2
 		}
