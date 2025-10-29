@@ -1,5 +1,9 @@
 package models
 
+import (
+	"fmt"
+)
+
 // NetModel 网络表
 type NetModel struct {
 	Model
@@ -15,4 +19,8 @@ type NetModel struct {
 	ScanStatus         int8      `json:"scanStatus"`                         // 扫描状态
 	ScanProgress       float64   `json:"scanProgress"`                       // 扫描进度
 	CanUseHoneyIPRange string    `gorm:"size:256" json:"canUseHoneyIpRange"` // 能够使用的诱捕ip范围
+}
+
+func (model NetModel) Subnet() string {
+	return fmt.Sprintf("%s/%d", model.IP, model.Mask)
 }

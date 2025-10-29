@@ -5,9 +5,12 @@ import (
 	"honey_server/internal/api"
 	"honey_server/internal/api/net_api"
 	"honey_server/internal/middleware"
+	"honey_server/internal/models"
 )
 
 func NetRouter(r *gin.RouterGroup) {
 	var app = api.App.NetApi
 	r.GET("net", middleware.BindQueryMiddleware[net_api.ListRequest], app.ListView)
+	r.GET("net/options", app.OptionsView)
+	r.GET("net/:id", middleware.BindUriMiddleware[models.IDRequest], app.DetailView)
 }

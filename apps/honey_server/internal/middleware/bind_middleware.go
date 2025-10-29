@@ -29,7 +29,7 @@ func BindQueryMiddleware[T any](c *gin.Context) {
 
 func BindUriMiddleware[T any](c *gin.Context) {
 	var cr T
-	err := c.ShouldBind(&cr)
+	err := c.ShouldBindUri(&cr)
 	if err != nil {
 		res.FailWithError(err, c)
 		c.Abort()
