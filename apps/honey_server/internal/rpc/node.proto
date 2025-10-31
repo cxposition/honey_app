@@ -96,11 +96,18 @@ message NetworkFlushOutMessage {
 }
 
 message NetScanInMessage {
-    repeated string filterNetworkName = 1;
+    string network               = 1;  // 使用哪一个网卡进行arp探测
+    string ipRange               = 2;  // 需要扫描的ip列表
+    repeated string filterIPList = 3;  // 不需要扫描的ip列表
+    uint32 netID                 = 4;  // 网络id
 }
 
 message NetScanOutMessage {
-    repeated string filterNetworkName = 1;
+    bool end       = 1;  // 是否结束
+    float progress = 2;  // 扫描进度
+    string ip      = 3;  // mac
+    string mac     = 4;  // ip
+    string manuf   = 5;  // mac对应的厂商
 }
 
 message NodeRemoveInMessage {

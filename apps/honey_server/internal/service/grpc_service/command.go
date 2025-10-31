@@ -108,12 +108,14 @@ func SendCommand(nodeID string, req *node_rpc.CmdRequest, timeout time.Duration)
 	select {
 	case cmd.ReqChan <- req:
 		// 成功发送
+		logrus.Infof("节点 %s 的 task %s 已发送", nodeID, req.TaskID)
 	case <-time.After(3 * time.Second):
 		return nil, fmt.Errorf("发送命令到节点 %s 超时", nodeID)
 	}
 
 	select {
 	case resp := <-respChan:
+		logrus.Infof("节点 %s 的 task %s 已接收到响应", nodeID, req.TaskID)
 		return resp, nil
 	case <-time.After(timeout):
 		return nil, fmt.Errorf("等待节点 %s 响应超时", nodeID)

@@ -15,4 +15,5 @@ func NetRouter(r *gin.RouterGroup) {
 	r.GET("net/:id", middleware.BindUriMiddleware[models.IDRequest], app.DetailView)
 	r.PUT("net", middleware.BindJsonMiddleware[net_api.UpdateRequest], app.UpdateView)
 	r.DELETE("net", middleware.BindJsonMiddleware[models.IDRequestList], app.RemoveView)
+	r.POST("net/scan", middleware.BindJsonMiddleware[models.IDRequest], app.ScanView)
 }

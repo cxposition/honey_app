@@ -5,7 +5,7 @@ logger:
 system:
   grpcManageAddr: ":8081"          # rpc的运行地址
   network: "ens33"
-  uid:
+  uid: "c6807dbc-e881-46d7-8408-d949333b02bb"
 #  webAddr: "127.0.0.1:8089"                    # web的运行地址
 filterNetworkList:
   - br-
