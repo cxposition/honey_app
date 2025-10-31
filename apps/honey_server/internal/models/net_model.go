@@ -1,8 +1,10 @@
 package models
 
 import (
+	"errors"
 	"fmt"
 	"github.com/sirupsen/logrus"
+	"gorm.io/gorm"
 	"net"
 )
 
@@ -31,4 +33,24 @@ func (model NetModel) InSubnet(ip string) bool {
 	_, _net, _ := net.ParseCIDR(model.Subnet())
 	logrus.Infof("_net:%+v", _net)
 	return _net.Contains(net.ParseIP(ip))
+}
+
+func (model NetModel) BeforeDelete(tx *gorm.DB) error {
+	// 是否有诱捕ip
+	var count int64
+	tx.Model(&HoneyIpModel{}).Where("net_id = ?", model.ID).Count(&count)
+	if count > 0 {
+		return errors.New("存在诱捕ip，不能删除网络")
+	}
+
+	// 将启用的网卡状态归位
+	var nodeNet NodeNetworkModel
+	err := tx.Take(&nodeNet, "net_id = ? and network = ?", model.ID, model.Network).Error
+	if err != nil {
+		return nil
+	}
+
+	// 修改状态
+	err = tx.Model(&nodeNet).Update("status", 2).Error
+	return nil
 }
