@@ -1,21 +1,10 @@
-package ip
+package main
 
 import (
 	"fmt"
 	"net"
 	"strings"
 )
-
-func HasLocalIPAddr(_ip string) bool {
-	ip := net.ParseIP(_ip)
-	if ip.IsLoopback() {
-		return true
-	}
-	if ip.IsLinkLocalUnicast() {
-		return true
-	}
-	return false
-}
 
 func ParseIPList(ipStr string) ([]string, error) {
 	var result []string
@@ -83,4 +72,16 @@ func ipAfter(ip1, ip2 net.IP) bool {
 		}
 	}
 	return false
+}
+
+func main() {
+	input := "192.168.200.2-192.168.200.200,192.168.200.240"
+	ips, err := ParseIPList(input)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+	fmt.Println("解析结果数量:", len(ips))
+	fmt.Println("前几个:", ips)
+	//fmt.Println("最后几个:", ips[len(ips)-3:])
 }

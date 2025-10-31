@@ -2,6 +2,8 @@ package models
 
 import (
 	"fmt"
+	"github.com/sirupsen/logrus"
+	"net"
 )
 
 // NetModel 网络表
@@ -23,4 +25,10 @@ type NetModel struct {
 
 func (model NetModel) Subnet() string {
 	return fmt.Sprintf("%s/%d", model.IP, model.Mask)
+}
+
+func (model NetModel) InSubnet(ip string) bool {
+	_, _net, _ := net.ParseCIDR(model.Subnet())
+	logrus.Infof("_net:%+v", _net)
+	return _net.Contains(net.ParseIP(ip))
 }

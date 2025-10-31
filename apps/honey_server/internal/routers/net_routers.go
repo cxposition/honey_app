@@ -13,4 +13,5 @@ func NetRouter(r *gin.RouterGroup) {
 	r.GET("net", middleware.BindQueryMiddleware[net_api.ListRequest], app.ListView)
 	r.GET("net/options", app.OptionsView)
 	r.GET("net/:id", middleware.BindUriMiddleware[models.IDRequest], app.DetailView)
+	r.PUT("net", middleware.BindJsonMiddleware[net_api.UpdateRequest], app.UpdateView)
 }
