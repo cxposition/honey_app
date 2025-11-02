@@ -2,3 +2,4 @@
 settings_dev.yaml
 logs
 *.exe
+goroutine_test
