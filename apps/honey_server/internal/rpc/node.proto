@@ -108,6 +108,8 @@ message NetScanOutMessage {
     string ip      = 3;  // mac
     string mac     = 4;  // ip
     string manuf   = 5;  // mac对应的厂商
+    uint32 netID   = 6;  // 网络id
+    string errMsg  = 7;  // 错误信息
 }
 
 message NodeRemoveInMessage {

@@ -79,8 +79,9 @@ func (NodeService) Command(stream node_rpc.NodeService_CommandServer) error {
 			select {
 			case ch <- resp: // 匹配好结果后将结果发送到对应通道,相当于向respChan中发消息
 				logrus.Infof("节点 %s 的 task %s 响应已发送", nodeID, resp.TaskID)
-			default:
-				logrus.Warnf("节点 %s 的 task %s 响应通道已满", nodeID, resp.TaskID)
+			case <-ctx.Done():
+				//default:
+				//	logrus.Warnf("节点 %s 的 task %s 响应通道已满", nodeID, resp.TaskID)
 			}
 		} else {
 			logrus.Warnf("节点 %s 收到未知 taskID=%s 的响应", nodeID, resp.TaskID)

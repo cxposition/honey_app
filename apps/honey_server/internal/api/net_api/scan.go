@@ -1,7 +1,7 @@
 package net_api
 
 import (
-	"fmt"
+	"context"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
@@ -40,16 +40,52 @@ func (NetApi) ScanView(c *gin.Context) {
 		},
 	}
 
-	// 4️⃣ 通过 gRPC 下发命令
-	resp, err := grpc_service.SendCommand(model.NodeModel.Uid, req, 8*time.Second)
-	if err != nil {
-		res.FailWithMsg(fmt.Sprintf("命令执行失败: %v", err), c)
+	nodeID := model.NodeModel.Uid
+	val, ok := grpc_service.NodeCommandMap.Load(nodeID)
+	if !ok {
+		logrus.Errorf("节点 %s 未找到", nodeID)
+		//cancelFunc()
 		return
 	}
-	if resp == nil || resp.NetScanOutMessage == nil {
-		res.FailWithMsg("节点未返回网卡信息", c)
-		return
+	cmd := val.(*grpc_service.Command)
+
+	respChan := make(chan *node_rpc.CmdResponse, 1)
+	cmd.ResMap.Store(req.TaskID, respChan)
+	defer cmd.ResMap.Delete(req.TaskID)
+
+	select {
+	case cmd.ReqChan <- req:
+		// 成功发送
+		logrus.Infof("节点 %s 的 task %s 已发送", nodeID, req.TaskID)
+	case <-time.After(3 * time.Second):
+		logrus.Errorf("发送命令到节点 %s 超时", nodeID)
 	}
 
-	logrus.Infof("收到节点的网卡扫描返回消息%+v", resp)
+	// ✅ 添加超时机制
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+label:
+	for {
+		select {
+		case resp := <-respChan:
+			logrus.Debugf("节点 %s 的 task %s 的结果为 %+v", nodeID, req.TaskID, resp)
+			message := resp.NetScanOutMessage
+			logrus.Infof("节点信息为:%+v", message)
+			if message.ErrMsg != "" {
+				res.FailWithMsg("扫描错误"+message.ErrMsg, c)
+				break label
+			}
+			if message.End {
+				break label
+			}
+		case <-ctx.Done():
+			res.FailWithMsg("获取响应超时", c)
+			return
+		default:
+		}
+	}
+
+	res.OkWithMsg("扫描成功", c)
+
 }
