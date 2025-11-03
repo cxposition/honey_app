@@ -3,6 +3,7 @@ package command
 import (
 	"fmt"
 	"github.com/j-keck/arping"
+	"honey_node/internal/core"
 	"honey_node/internal/global"
 	"honey_node/internal/rpc/node_rpc"
 	"honey_node/internal/utils/ip"
@@ -66,6 +67,8 @@ func HandleNetScan(request *node_rpc.CmdRequest, respChan chan *node_rpc.CmdResp
 				fmt.Printf("\n[发现设备] IP: %-15s MAC: %s RTT: %v\n", ipStr, mac, duration)
 			}
 
+			manufName := core.GetVendorByMAC(mac.String())
+
 			atomic.AddInt64(&doneCount, 1)
 			done := atomic.LoadInt64(&doneCount)
 			progress := float64(done) / float64(total) * 100
@@ -80,6 +83,7 @@ func HandleNetScan(request *node_rpc.CmdRequest, respChan chan *node_rpc.CmdResp
 					NetID:    req.NetID,
 					Ip:       _ip,
 					Mac:      mac.String(),
+					Manuf:    manufName,
 				},
 			}
 		}(_ip)
