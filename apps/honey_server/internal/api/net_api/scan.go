@@ -1,6 +1,7 @@
 package net_api
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
@@ -10,8 +11,11 @@ import (
 	"honey_server/internal/rpc/node_rpc"
 	"honey_server/internal/service/grpc_service"
 	"honey_server/internal/utils/res"
+	"sync"
 	"time"
 )
+
+var mux sync.Mutex
 
 func (NetApi) ScanView(c *gin.Context) {
 	cr := middleware.GetBind[models.IDRequest](c)
@@ -25,6 +29,11 @@ func (NetApi) ScanView(c *gin.Context) {
 		res.FailWithMsg("节点未启动", c)
 		return
 	}
+
+	// 需要将诱捕ip过滤
+	var filterIPList []string
+	global.DB.Model(&models.HoneyIpModel{}).Where("net_id = ?", cr.ID).Select("ip").Scan(&filterIPList)
+	fmt.Println("过滤的ip列表", filterIPList)
 
 	taskID := uuid.New().String()
 	req := &node_rpc.CmdRequest{
@@ -49,10 +58,21 @@ func (NetApi) ScanView(c *gin.Context) {
 	respChan := make(chan *node_rpc.CmdResponse, 100) // 缓冲更大些
 	cmd.ResMap.Store(taskID, respChan)
 
-	// ✅ 异步处理扫描结果
+	mux.Lock()
+	if model.ScanStatus == 2 {
+		res.FailWithMsg("当前子网正在扫描中", c)
+		mux.Unlock()
+		return
+	}
+
+	// 修改状态为扫描中
+	global.DB.Model(&model).Update("scan_status", 2)
+	mux.Unlock()
+
+	// 异步处理扫描结果
 	go handleScanResult(nodeID, model, taskID, respChan)
 
-	// ✅ 异步发送请求（防止阻塞）
+	// 异步发送请求（防止阻塞）
 	go func() {
 		select {
 		case cmd.ReqChan <- req:
@@ -62,7 +82,7 @@ func (NetApi) ScanView(c *gin.Context) {
 		}
 	}()
 
-	// ✅ 立即响应前端
+	// 立即响应前端
 	res.OkWithData(gin.H{
 		"task_id": taskID,
 		"msg":     "扫描任务已下发，正在后台执行",
@@ -76,6 +96,11 @@ func handleScanResult(nodeID string, model models.NetModel, taskID string, respC
 			val.(*grpc_service.Command).ResMap.Delete(taskID)
 		}
 		close(respChan)
+	}()
+
+	defer func() {
+		// 函数走完，将状态修改为扫描完成
+		global.DB.Model(&model).Update("scan_status", 1)
 	}()
 
 	logrus.Infof("[异步扫描] 网络 %d（节点 %s）任务 %s 开始接收结果", model.ID, nodeID, taskID)

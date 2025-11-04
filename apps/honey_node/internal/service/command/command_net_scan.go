@@ -41,7 +41,7 @@ func HandleNetScan(request *node_rpc.CmdRequest, respChan chan *node_rpc.CmdResp
 	}
 
 	iface := req.Network
-	concurrency := 200
+	concurrency := 10
 	taskNum := make(chan struct{}, concurrency) // 并发限制
 
 	var wg sync.WaitGroup

@@ -20,7 +20,7 @@ type NetModel struct {
 	Gateway            string    `gorm:"size:32" json:"gateway"`
 	HostCount          int       `json:"hostCount"`                          // 存活资产
 	HoneyIpCount       int       `json:"honeyIpCount"`                       // 诱捕ip
-	ScanStatus         int8      `json:"scanStatus"`                         // 扫描状态
+	ScanStatus         int8      `json:"scanStatus"`                         // 扫描状态 0表示待扫描 1扫描完成 2扫描中
 	ScanProgress       float64   `json:"scanProgress"`                       // 扫描进度
 	CanUseHoneyIPRange string    `gorm:"size:256" json:"canUseHoneyIpRange"` // 能够使用的诱捕ip范围
 }
