@@ -1,7 +1,6 @@
 package net_api
 
 import (
-	"context"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
@@ -27,7 +26,6 @@ func (NetApi) ScanView(c *gin.Context) {
 		return
 	}
 
-	// 3️⃣ 构造命令请求（让节点刷新网卡）
 	taskID := uuid.New().String()
 	req := &node_rpc.CmdRequest{
 		CmdType: node_rpc.CmdType_cmdNetScanType,
@@ -43,89 +41,102 @@ func (NetApi) ScanView(c *gin.Context) {
 	nodeID := model.NodeModel.Uid
 	val, ok := grpc_service.NodeCommandMap.Load(nodeID)
 	if !ok {
-		logrus.Errorf("节点 %s 未找到", nodeID)
-		//cancelFunc()
+		res.FailWithMsg("节点未注册", c)
 		return
 	}
 	cmd := val.(*grpc_service.Command)
 
-	respChan := make(chan *node_rpc.CmdResponse, 1)
-	cmd.ResMap.Store(req.TaskID, respChan)
-	defer cmd.ResMap.Delete(req.TaskID)
+	respChan := make(chan *node_rpc.CmdResponse, 100) // 缓冲更大些
+	cmd.ResMap.Store(taskID, respChan)
 
-	select {
-	case cmd.ReqChan <- req:
-		// 成功发送
-		logrus.Infof("节点 %s 的 task %s 已发送", nodeID, req.TaskID)
-	case <-time.After(3 * time.Second):
-		logrus.Errorf("发送命令到节点 %s 超时", nodeID)
-	}
+	// ✅ 异步处理扫描结果
+	go handleScanResult(nodeID, model, taskID, respChan)
 
-	// ✅ 添加超时机制
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
+	// ✅ 异步发送请求（防止阻塞）
+	go func() {
+		select {
+		case cmd.ReqChan <- req:
+			logrus.Infof("节点 %s 的 task %s 已下发", nodeID, taskID)
+		case <-time.After(3 * time.Second):
+			logrus.Errorf("发送命令到节点 %s 超时", nodeID)
+		}
+	}()
+
+	// ✅ 立即响应前端
+	res.OkWithData(gin.H{
+		"task_id": taskID,
+		"msg":     "扫描任务已下发，正在后台执行",
+	}, c)
+}
+
+// handleScanResult 异步接收扫描结果并更新数据库
+func handleScanResult(nodeID string, model models.NetModel, taskID string, respChan chan *node_rpc.CmdResponse) {
+	defer func() {
+		if val, ok := grpc_service.NodeCommandMap.Load(nodeID); ok {
+			val.(*grpc_service.Command).ResMap.Delete(taskID)
+		}
+		close(respChan)
+	}()
+
+	logrus.Infof("[异步扫描] 网络 %d（节点 %s）任务 %s 开始接收结果", model.ID, nodeID, taskID)
 
 	var netScanMsg []*node_rpc.NetScanOutMessage
-label:
+	timeout := time.After(30 * time.Second) // 最大等待时间 30s
+
 	for {
 		select {
 		case resp := <-respChan:
-			logrus.Debugf("节点 %s 的 task %s 的结果为 %+v", nodeID, req.TaskID, resp)
-			message := resp.NetScanOutMessage
-			logrus.Infof("节点信息为:%+v", message)
-			if message.ErrMsg != "" {
-				res.FailWithMsg("扫描错误"+message.ErrMsg, c)
-				break label
+			if resp == nil || resp.NetScanOutMessage == nil {
+				continue
 			}
-			if message.End {
-				break label
+			msg := resp.NetScanOutMessage
+			if msg.ErrMsg != "" {
+				logrus.Errorf("扫描错误: %s", msg.ErrMsg)
+				return
 			}
-			netScanMsg = append(netScanMsg, message)
-		case <-ctx.Done():
-			res.FailWithMsg("获取响应超时", c)
+			if msg.End {
+				logrus.Infof("[异步扫描] 网络 %d 扫描完成，共收到 %d 条记录", model.ID, len(netScanMsg))
+				updateHosts(model, netScanMsg)
+				return
+			}
+			netScanMsg = append(netScanMsg, msg)
+
+		case <-timeout:
+			logrus.Warnf("[异步扫描] 网络 %d 超时，收到 %d 条记录", model.ID, len(netScanMsg))
+			updateHosts(model, netScanMsg)
 			return
-		default:
 		}
 	}
+}
 
-	// 当前的主机列表
+// updateHosts 比对数据库，计算新增和删除主机
+func updateHosts(model models.NetModel, netScanMsg []*node_rpc.NetScanOutMessage) {
 	var hostList []models.HostModel
-	global.DB.Find(&hostList, "net_id = ?", cr.ID)
+	global.DB.Find(&hostList, "net_id = ?", model.ID)
 
-	// 算出新增的主机,删除的主机
-
-	// -----------------------------
-	// ✅ 算出新增的主机和删除的主机
-	// -----------------------------
-
-	// 1️⃣ 把数据库中已有主机转成 map[ip]HostModel
 	dbHosts := make(map[string]models.HostModel)
 	for _, h := range hostList {
 		dbHosts[h.IP] = h
 	}
 
-	// 2️⃣ 把扫描结果转成 map[ip]*node_rpc.NetScanOutMessage
 	scanHosts := make(map[string]*node_rpc.NetScanOutMessage)
 	for _, msg := range netScanMsg {
 		scanHosts[msg.Ip] = msg
 	}
 
-	// 3️⃣ 计算新增主机：在扫描结果中但不在数据库中
 	var newHosts []models.HostModel
 	for ip, msg := range scanHosts {
 		if _, exists := dbHosts[ip]; !exists {
-			newHost := models.HostModel{
+			newHosts = append(newHosts, models.HostModel{
 				NodeID: model.NodeID,
 				NetID:  model.ID,
 				IP:     msg.Ip,
 				Mac:    msg.Mac,
 				Manuf:  msg.Manuf,
-			}
-			newHosts = append(newHosts, newHost)
+			})
 		}
 	}
 
-	// 4️⃣ 计算删除主机：在数据库中但不在扫描结果中
 	var delIPs []string
 	for ip := range dbHosts {
 		if _, exists := scanHosts[ip]; !exists {
@@ -133,28 +144,24 @@ label:
 		}
 	}
 
-	// 5️⃣ 执行数据库更新
 	tx := global.DB.Begin()
-
 	if len(newHosts) > 0 {
 		if err := tx.Create(&newHosts).Error; err != nil {
 			tx.Rollback()
-			res.FailWithMsg("新增主机保存失败: "+err.Error(), c)
+			logrus.Errorf("新增主机失败: %v", err)
 			return
 		}
-		logrus.Infof("网络 %d 扫描新增主机 %d 个", model.ID, len(newHosts))
+		logrus.Infof("[异步扫描] 网络 %d 新增主机 %d 个", model.ID, len(newHosts))
 	}
 
 	if len(delIPs) > 0 {
 		if err := tx.Where("net_id = ? AND ip IN ?", model.ID, delIPs).Delete(&models.HostModel{}).Error; err != nil {
 			tx.Rollback()
-			res.FailWithMsg("删除主机失败: "+err.Error(), c)
+			logrus.Errorf("删除主机失败: %v", err)
 			return
 		}
-		logrus.Infof("网络 %d 扫描删除主机 %d 个", model.ID, len(delIPs))
+		logrus.Infof("[异步扫描] 网络 %d 删除主机 %d 个", model.ID, len(delIPs))
 	}
 
 	tx.Commit()
-
-	res.OkWithMsg("扫描成功", c)
 }
