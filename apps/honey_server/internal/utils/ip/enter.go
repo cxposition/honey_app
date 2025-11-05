@@ -185,3 +185,105 @@ func ParseIPRange(ipRange string) ([]string, error) {
 	}
 	return ips, nil
 }
+
+// GetUsableIPList 根据 IP 和掩码生成可用 IP 列表
+func GetUsableIPList(ipStr string, maskBits int) []string {
+	ip := net.ParseIP(ipStr)
+	if ip == nil {
+		return nil
+	}
+
+	mask := net.CIDRMask(maskBits, 32)
+	networkIP := ip.Mask(mask)
+	broadcastIP := make(net.IP, len(networkIP))
+	for i := 0; i < len(networkIP); i++ {
+		broadcastIP[i] = networkIP[i] | ^mask[i]
+	}
+
+	// 若掩码小于24，仅生成第一个C段（networkIP的第三个字节不变）
+	if maskBits < 24 {
+		start := make(net.IP, len(networkIP))
+		copy(start, networkIP)
+		start[2] = networkIP[2] // 保留第三段
+		start[3] = 1
+
+		end := make(net.IP, len(networkIP))
+		copy(end, networkIP)
+		end[2] = networkIP[2]
+		end[3] = 254
+
+		return generateIPRange(start, end)
+	}
+
+	// 掩码 >= 24 的情况，生成整个网段（排除网络和广播地址）
+	first := make(net.IP, len(networkIP))
+	copy(first, networkIP)
+	incrementIP(first)
+
+	last := make(net.IP, len(broadcastIP))
+	copy(last, broadcastIP)
+	decrementIP(last)
+
+	return generateIPRange(first, last)
+}
+
+// 生成从 start 到 end 的所有 IP 地址
+func generateIPRange(start, end net.IP) []string {
+	var result []string
+	current := make(net.IP, len(start))
+	copy(current, start)
+
+	for ; !current.Equal(end); incrementIP(current) {
+		result = append(result, current.String())
+	}
+	result = append(result, end.String()) // 包含最后一个
+	return result
+}
+
+// IP +1
+func incrementIP(ip net.IP) {
+	for j := len(ip) - 1; j >= 0; j-- {
+		ip[j]++
+		if ip[j] != 0 {
+			break
+		}
+	}
+}
+
+// IP -1
+func decrementIP(ip net.IP) {
+	for j := len(ip) - 1; j >= 0; j-- {
+		ip[j]--
+		if ip[j] != 255 {
+			break
+		}
+	}
+}
+
+// GetUsableIPRange 传入 CIDR，返回可用 IP 范围字符串
+func GetUsableIPRange(cidr string) (string, error) {
+	ip, ipnet, err := net.ParseCIDR(cidr)
+	if err != nil {
+		return "", fmt.Errorf("invalid cidr: %v", err)
+	}
+
+	// 网络地址
+	networkIP := ip.Mask(ipnet.Mask)
+
+	// 广播地址 = 网络地址 | ^mask
+	broadcastIP := make(net.IP, len(networkIP))
+	for i := range networkIP {
+		broadcastIP[i] = networkIP[i] | ^ipnet.Mask[i]
+	}
+
+	// 计算首尾可用 IP
+	first := make(net.IP, len(networkIP))
+	copy(first, networkIP)
+	incrementIP(first) // 跳过网络地址
+
+	last := make(net.IP, len(broadcastIP))
+	copy(last, broadcastIP)
+	decrementIP(last) // 跳过广播地址
+
+	return fmt.Sprintf("%s-%s", first.String(), last.String()), nil
+}
