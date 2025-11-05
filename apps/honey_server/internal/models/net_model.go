@@ -50,6 +50,10 @@ func (model NetModel) BeforeDelete(tx *gorm.DB) error {
 		return nil
 	}
 
+	var hostList []HostModel
+	tx.Find(&hostList, "net_id = ?", model.ID).Delete(&hostList)
+	logrus.Infof("关联删除主机%d个", len(hostList))
+
 	// 修改状态
 	err = tx.Model(&nodeNet).Update("status", 2).Error
 	return nil
