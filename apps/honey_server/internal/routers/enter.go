@@ -18,6 +18,7 @@ func Run() {
 	NodeRouters(g)
 	NodeNetworkRouters(g)
 	NetRouter(g)
+	HostRouters(g)
 
 	webAddr := global.Config.System.WebAddr
 	r.Run(webAddr)
