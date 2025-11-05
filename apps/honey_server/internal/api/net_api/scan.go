@@ -30,6 +30,11 @@ func (NetApi) ScanView(c *gin.Context) {
 		return
 	}
 
+	if model.CanUseHoneyIPRange == "" {
+		res.FailWithMsg("节点未运行", c)
+		return
+	}
+
 	// 需要将诱捕ip过滤
 	var filterIPList []string
 	global.DB.Model(&models.HoneyIpModel{}).Where("net_id = ?", cr.ID).Select("ip").Scan(&filterIPList)

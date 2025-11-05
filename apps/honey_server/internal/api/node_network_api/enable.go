@@ -8,8 +8,12 @@ import (
 	"honey_server/internal/global"
 	"honey_server/internal/middleware"
 	"honey_server/internal/models"
+	"honey_server/internal/utils/ip"
 	"honey_server/internal/utils/res"
+	"sync"
 )
+
+var mu sync.Mutex
 
 func (n *NodeNetworkApi) EnableView(c *gin.Context) {
 	cr := middleware.GetBind[models.IDRequest](c)
@@ -20,8 +24,8 @@ func (n *NodeNetworkApi) EnableView(c *gin.Context) {
 		return
 	}
 
-	n.mutex.Lock()
-	defer n.mutex.Unlock()
+	mu.Lock()
+	defer mu.Unlock()
 	if model.Status == 1 {
 		res.FailWithMsg("网卡已启用,请勿重复启用", c)
 		return
@@ -30,13 +34,18 @@ func (n *NodeNetworkApi) EnableView(c *gin.Context) {
 	err = global.DB.Transaction(func(tx *gorm.DB) error {
 		// 启用网卡
 		// 往网络列表中添加一条记录
+		ipRange, err1 := ip.GetUsableIPRange(fmt.Sprintf("%s/%d", model.IP, model.Mask))
+		if err1 != nil {
+			return err1
+		}
 		var net = models.NetModel{
-			NodeID:  model.NodeID,
-			Title:   fmt.Sprintf("%s_%s_网络", model.NodeModel.Title, model.Network),
-			Network: model.Network,
-			IP:      model.IP,
-			Mask:    model.Mask,
-			Gateway: model.Gateway,
+			NodeID:             model.NodeID,
+			Title:              fmt.Sprintf("%s_%s_网络", model.NodeModel.Title, model.Network),
+			Network:            model.Network,
+			IP:                 model.IP,
+			Mask:               model.Mask,
+			Gateway:            model.Gateway,
+			CanUseHoneyIPRange: ipRange,
 		}
 
 		err = tx.Create(&net).Error
