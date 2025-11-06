@@ -22,6 +22,7 @@ type Command struct {
 
 // NodeCommandMap 存放所有在线节点
 var NodeCommandMap sync.Map // nodeID -> *Command
+var mapMutex sync.RWMutex
 
 func (NodeService) Command(stream node_rpc.NodeService_CommandServer) error {
 	ctx := stream.Context()
@@ -121,4 +122,12 @@ func SendCommand(nodeID string, req *node_rpc.CmdRequest, timeout time.Duration)
 	case <-time.After(timeout):
 		return nil, fmt.Errorf("等待节点 %s 响应超时", nodeID)
 	}
+}
+
+func GetNodeCommand(nodeID string) (*Command, bool) {
+	mapMutex.RLock()
+	defer mapMutex.RUnlock()
+
+	cmd, ok := NodeCommandMap.Load(nodeID)
+	return cmd.(*Command), ok
 }

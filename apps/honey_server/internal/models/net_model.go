@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
+	"honey_server/internal/utils/ip"
 	"net"
 )
 
@@ -57,4 +58,8 @@ func (model NetModel) BeforeDelete(tx *gorm.DB) error {
 	// 修改状态
 	err = tx.Model(&nodeNet).Update("status", 2).Error
 	return nil
+}
+
+func (model NetModel) IpRange() (ipRange []string, err error) {
+	return ip.ParseIPRange(model.CanUseHoneyIPRange)
 }
