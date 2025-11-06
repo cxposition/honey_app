@@ -5,8 +5,23 @@ services:
     image: rabbitmq:3.9-management
     container_name: rabbitmq
     ports:
-      - "5672:5672"
-      - "15672:15672"
+      - "5672:5672"       # RabbitMQ的AMQP端口
+      - "15672:15672"     # RabbitMQ的管理界面的端口
+      - "5671:5671"       # RabbitMQ的AMQP端口 (加密)
+      - "15671:15671"     # RabbitMQ的管理界面的端口 (加密)
     environment:
       RABBITMQ_DEFAULT_USER: admin
       RABBITMQ_DEFAULT_PASS: password
+    volumes:
+      - ./rabbitMQ/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+      - ./rabbitMQ/ssl:/etc/rabbitmq/ssl          # SSL证书目录
+    networks:
+      mq_network:
+        ipv4_address: 10.3.0.8
+networks:
+  mq_network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.3.0.0/24
