@@ -129,5 +129,8 @@ func GetNodeCommand(nodeID string) (*Command, bool) {
 	defer mapMutex.RUnlock()
 
 	cmd, ok := NodeCommandMap.Load(nodeID)
+	if !ok {
+		return nil, false
+	}
 	return cmd.(*Command), ok
 }
