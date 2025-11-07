@@ -6,6 +6,7 @@ type Config struct {
 	Logger            Logger   `yaml:"logger"`
 	System            System   `yaml:"system"`
 	FilterNetworkList []string `yaml:"filterNetworkList"`
+	MQ                MQ       `yaml:"mq"`
 }
 
 type DB struct {
@@ -39,4 +40,27 @@ type System struct {
 	GrpcManageAddr string `yaml:"grpcManageAddr"`
 	Network        string `yaml:"network"`
 	Uid            string `yaml:"uid"`
+}
+
+type MQ struct {
+	User                 string `yaml:"user"`
+	Password             string `yaml:"password"`
+	Host                 string `yaml:"host"`
+	Port                 int    `yaml:"port"`
+	CreateIpExchangeName string `yaml:"createIpExchangeName"`
+	DeleteIpExchangeName string `yaml:"deleteIpExchangeName"`
+	BindPortExchangeName string `yaml:"bindPortExchangeName"`
+	Ssl                  bool   `yaml:"ssl"`
+	ClientCertificate    string `yaml:"clientCertificate"`
+	ClientKey            string `yaml:"clientKey"`
+	CaCertificate        string `yaml:"caCertificate"`
+}
+
+func (m MQ) Addr() string {
+	return fmt.Sprintf("amqps://%s:%s@%s:%d/",
+		m.User,
+		m.Password,
+		m.Host,
+		m.Port,
+	)
 }

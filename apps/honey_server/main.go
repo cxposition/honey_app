@@ -6,6 +6,7 @@ import (
 	"honey_server/internal/global"
 	"honey_server/internal/routers"
 	"honey_server/internal/service/grpc_service"
+	"honey_server/internal/service/mq_service"
 )
 
 func main() {
@@ -15,6 +16,9 @@ func main() {
 	core.InitIPDB()
 	global.DB = core.GetDB()
 	global.Redis = core.GetRedis()
+	global.Queue = core.InitMQ()
+	mq_service.RegisterExchange()
+
 	go grpc_service.Run()
 	flags.Run()
 	routers.Run()

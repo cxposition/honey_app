@@ -11,3 +11,15 @@ filterNetworkList:
   - br-
   - docker
   - mc_
+mq:
+  user: admin
+  password: password
+  host: 192.168.177.129
+  port: 5672
+  createIpExchangeName: createIpExchange
+  deleteIpExchangeName: deleteIpExchange
+  bindPortExchangeName: bindPortExchange
+  ssl: false
+  clientCertificate:    #客户端证书
+  clientKey:            #客户端私钥
+  caCertificate:        #ca证书

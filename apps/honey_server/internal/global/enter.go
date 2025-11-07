@@ -3,6 +3,7 @@ package global
 import (
 	"github.com/redis/go-redis/v9"
 	"github.com/sirupsen/logrus"
+	"github.com/streadway/amqp"
 	"gorm.io/gorm"
 	"honey_server/internal/config"
 )
@@ -12,6 +13,7 @@ var (
 	Redis  *redis.Client
 	Config *config.Config
 	Log    *logrus.Entry
+	Queue  *amqp.Channel
 )
 
 var (
