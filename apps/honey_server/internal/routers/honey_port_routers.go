@@ -10,4 +10,5 @@ import (
 func HoneyPortRouters(r *gin.RouterGroup) {
 	app := api.App.HoneyPortApi
 	r.PUT("honey_port", middleware.BindJsonMiddleware[honey_port_api.UpdateRequest], app.UpdateView)
+	r.GET("honey_port", middleware.BindQueryMiddleware[honey_port_api.ListRequest], app.ListView)
 }
