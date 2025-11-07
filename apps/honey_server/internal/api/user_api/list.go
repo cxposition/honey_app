@@ -15,7 +15,7 @@ type UserListRequest struct {
 
 func (UserApi) UserlistView(c *gin.Context) {
 	cr := middleware.GetBind[UserListRequest](c)
-	list, count, _ := common_service.QueryList(models.UserModel{}, common_service.Request{
+	list, count, _ := common_service.QueryList(models.UserModel{}, common_service.ListRequest{
 		Debug:    true,
 		Likes:    []string{"username"}, // username like req.Key
 		PageInfo: cr.PageInfo,

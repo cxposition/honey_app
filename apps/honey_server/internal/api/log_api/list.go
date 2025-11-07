@@ -21,7 +21,7 @@ func (l *LogApi) LogListView(c *gin.Context) {
 		Type: cr.Type,
 		IP:   cr.IP,
 		Addr: cr.Addr,
-	}, common_service.Request{
+	}, common_service.ListRequest{
 		Likes:    []string{"username"},
 		PageInfo: cr.PageInfo,
 		Sort:     "created_at desc",

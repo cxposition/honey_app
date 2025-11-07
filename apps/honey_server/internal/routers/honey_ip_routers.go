@@ -10,4 +10,5 @@ import (
 func HoneyIPRouters(r *gin.RouterGroup) {
 	app := api.App.HoneyIPApi
 	r.POST("honey_ip", middleware.BindJsonMiddleware[honey_ip_api.CreateRequest], app.CreateView)
+	r.GET("honey_ip", middleware.BindQueryMiddleware[honey_ip_api.ListRequest], app.ListView)
 }

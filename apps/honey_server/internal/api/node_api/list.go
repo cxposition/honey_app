@@ -10,11 +10,10 @@ import (
 
 func (NodeApi) ListView(c *gin.Context) {
 	cr := middleware.GetBind[models.PageInfo](c)
-	list, count, _ := common_service.QueryList(models.NodeModel{}, common_service.Request{
+	list, count, _ := common_service.QueryList(models.NodeModel{}, common_service.ListRequest{
 		Likes:    []string{"title", "ip"}, // username like req.Key
 		PageInfo: cr,
 		Sort:     "created_at desc",
 	})
 	res.OkWithList(list, count, c)
 }
-

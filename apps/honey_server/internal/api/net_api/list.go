@@ -21,7 +21,7 @@ type ListResponse struct {
 
 func (NetApi) ListView(c *gin.Context) {
 	cr := middleware.GetBind[ListRequest](c)
-	_list, count, _ := common_service.QueryList(models.NetModel{NodeID: cr.NodeID}, common_service.Request{
+	_list, count, _ := common_service.QueryList(models.NetModel{NodeID: cr.NodeID}, common_service.ListRequest{
 		Likes:    []string{"title", "ip"},
 		PageInfo: cr.PageInfo,
 		Sort:     "created_at desc",

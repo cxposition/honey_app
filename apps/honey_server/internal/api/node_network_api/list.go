@@ -15,7 +15,7 @@ type ListRequest struct {
 
 func (NodeNetworkApi) ListView(c *gin.Context) {
 	cr := middleware.GetBind[ListRequest](c)
-	list, count, _ := common_service.QueryList(models.NodeNetworkModel{NodeID: cr.NodeID}, common_service.Request{
+	list, count, _ := common_service.QueryList(models.NodeNetworkModel{NodeID: cr.NodeID}, common_service.ListRequest{
 		Likes:    []string{"network", "ip"},
 		PageInfo: cr.PageInfo,
 		Sort:     "created_at desc",
