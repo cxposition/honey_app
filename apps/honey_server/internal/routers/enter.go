@@ -20,6 +20,7 @@ func Run() {
 	NetRouter(g)
 	HostRouters(g)
 	HoneyIPRouters(g)
+	HoneyPortRouters(g)
 
 	webAddr := global.Config.System.WebAddr
 	r.Run(webAddr)
