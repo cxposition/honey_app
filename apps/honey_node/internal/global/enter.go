@@ -2,12 +2,9 @@ package global
 
 import (
 	"github.com/sirupsen/logrus"
+	"github.com/streadway/amqp"
 	"honey_node/internal/config"
 	"honey_node/internal/rpc/node_rpc"
-)
-
-var (
-	Config *config.Config
 )
 
 var (
@@ -19,4 +16,6 @@ var (
 var (
 	Log        *logrus.Entry
 	GrpcClient node_rpc.NodeServiceClient
+	Config     *config.Config
+	Queue      *amqp.Channel
 )
