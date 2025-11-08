@@ -13,7 +13,6 @@ func Run() {
 	go register(cfg.DeleteIpExchangeName, DeleteIpExchange)
 	go register(cfg.BindPortExchangeName, BindPortExchange)
 	logrus.Infof("启动MQ服务成功")
-
 }
 
 func register(exchangeName string, fn func(msg string) error) {

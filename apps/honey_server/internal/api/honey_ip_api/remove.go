@@ -6,6 +6,7 @@ import (
 	"honey_server/internal/middleware"
 	"honey_server/internal/models"
 	"honey_server/internal/service/grpc_service"
+	"honey_server/internal/service/mq_service"
 	"honey_server/internal/utils/res"
 )
 
@@ -33,6 +34,17 @@ func (HoneyIPApi) RemoveView(c *gin.Context) {
 	}
 
 	// 下发批量删除的任务到消息队列
+	req := mq_service.DeleteIPRequest{
+		LogID: "",
+	}
+	for _, model := range honeyIPList {
+		req.IpList = append(req.IpList, mq_service.IpInfo{
+			HoneyIPID: model.ID,
+			IP:        model.IP,
+			Network:   model.Network,
+		})
+	}
+	mq_service.SendDeleteIPMsg(nodeModel.Uid, req)
 
 	// 改状态
 	global.DB.Model(&honeyIPList).Update("status", 4)
