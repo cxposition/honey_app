@@ -72,9 +72,9 @@ func register(exchangeName string, fn func(msg string) error) {
 	for d := range _megs {
 		err = fn(string(d.Body)) // 回调函数处理消息
 		if err != nil {
-			d.Ack(false)
+			d.Nack(false, true) // 拒接消息, 重新入队
 			continue
 		}
-		d.Nack(false, true) // 拒接消息, 重新入队
+		d.Ack(false)
 	}
 }

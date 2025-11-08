@@ -35,5 +35,5 @@ func Resource() {
 	if err != nil {
 		logrus.Errorf("上报资源信息失败：%s", err)
 	}
-	logrus.Infof("上报资源信息成功")
+	//logrus.Infof("上报资源信息成功")
 }
