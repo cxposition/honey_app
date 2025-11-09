@@ -9,7 +9,7 @@ import (
 	"honey_server/internal/rpc/node_rpc"
 )
 
-func (NodeService) StatusCreateIP(ctx context.Context, in *node_rpc.StatusCreateRequest) (pd *node_rpc.BaseResponse, err error) {
+func (NodeService) StatusCreateIP(ctx context.Context, in *node_rpc.StatusCreateIPRequest) (pd *node_rpc.BaseResponse, err error) {
 	pd = new(node_rpc.BaseResponse)
 	var honeyIPModel models.HoneyIpModel
 	err1 := global.DB.Take(&honeyIPModel, in.HoneyIPID).Error

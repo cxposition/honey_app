@@ -38,7 +38,7 @@ type NodeServiceClient interface {
 	// 管理下发命令到节点运行
 	Command(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[CmdResponse, CmdRequest], error)
 	// 节点上报创建ip的回调
-	StatusCreateIP(ctx context.Context, in *StatusCreateRequest, opts ...grpc.CallOption) (*BaseResponse, error)
+	StatusCreateIP(ctx context.Context, in *StatusCreateIPRequest, opts ...grpc.CallOption) (*BaseResponse, error)
 }
 
 type nodeServiceClient struct {
@@ -82,7 +82,7 @@ func (c *nodeServiceClient) Command(ctx context.Context, opts ...grpc.CallOption
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type NodeService_CommandClient = grpc.BidiStreamingClient[CmdResponse, CmdRequest]
 
-func (c *nodeServiceClient) StatusCreateIP(ctx context.Context, in *StatusCreateRequest, opts ...grpc.CallOption) (*BaseResponse, error) {
+func (c *nodeServiceClient) StatusCreateIP(ctx context.Context, in *StatusCreateIPRequest, opts ...grpc.CallOption) (*BaseResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(BaseResponse)
 	err := c.cc.Invoke(ctx, NodeService_StatusCreateIP_FullMethodName, in, out, cOpts...)
@@ -105,7 +105,7 @@ type NodeServiceServer interface {
 	// 管理下发命令到节点运行
 	Command(grpc.BidiStreamingServer[CmdResponse, CmdRequest]) error
 	// 节点上报创建ip的回调
-	StatusCreateIP(context.Context, *StatusCreateRequest) (*BaseResponse, error)
+	StatusCreateIP(context.Context, *StatusCreateIPRequest) (*BaseResponse, error)
 	mustEmbedUnimplementedNodeServiceServer()
 }
 
@@ -125,7 +125,7 @@ func (UnimplementedNodeServiceServer) NodeResource(context.Context, *NodeResourc
 func (UnimplementedNodeServiceServer) Command(grpc.BidiStreamingServer[CmdResponse, CmdRequest]) error {
 	return status.Errorf(codes.Unimplemented, "method Command not implemented")
 }
-func (UnimplementedNodeServiceServer) StatusCreateIP(context.Context, *StatusCreateRequest) (*BaseResponse, error) {
+func (UnimplementedNodeServiceServer) StatusCreateIP(context.Context, *StatusCreateIPRequest) (*BaseResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method StatusCreateIP not implemented")
 }
 func (UnimplementedNodeServiceServer) mustEmbedUnimplementedNodeServiceServer() {}
@@ -193,7 +193,7 @@ func _NodeService_Command_Handler(srv interface{}, stream grpc.ServerStream) err
 type NodeService_CommandServer = grpc.BidiStreamingServer[CmdResponse, CmdRequest]
 
 func _NodeService_StatusCreateIP_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(StatusCreateRequest)
+	in := new(StatusCreateIPRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -205,7 +205,7 @@ func _NodeService_StatusCreateIP_Handler(srv interface{}, ctx context.Context, d
 		FullMethod: NodeService_StatusCreateIP_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NodeServiceServer).StatusCreateIP(ctx, req.(*StatusCreateRequest))
+		return srv.(NodeServiceServer).StatusCreateIP(ctx, req.(*StatusCreateIPRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

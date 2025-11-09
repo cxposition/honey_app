@@ -1018,30 +1018,31 @@ func (*NodeRemoveOutMessage) Descriptor() ([]byte, []int) {
 	return file_internal_rpc_node_proto_rawDescGZIP(), []int{13}
 }
 
-type StatusCreateRequest struct {
+type StatusCreateIPRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	HoneyIPID     uint32                 `protobuf:"varint,1,opt,name=honeyIPID,proto3" json:"honeyIPID,omitempty"`
 	ErrMsg        string                 `protobuf:"bytes,2,opt,name=errMsg,proto3" json:"errMsg,omitempty"`
 	Network       string                 `protobuf:"bytes,3,opt,name=network,proto3" json:"network,omitempty"`
 	Mac           string                 `protobuf:"bytes,4,opt,name=mac,proto3" json:"mac,omitempty"`
+	LogID         string                 `protobuf:"bytes,5,opt,name=logID,proto3" json:"logID,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *StatusCreateRequest) Reset() {
-	*x = StatusCreateRequest{}
+func (x *StatusCreateIPRequest) Reset() {
+	*x = StatusCreateIPRequest{}
 	mi := &file_internal_rpc_node_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *StatusCreateRequest) String() string {
+func (x *StatusCreateIPRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*StatusCreateRequest) ProtoMessage() {}
+func (*StatusCreateIPRequest) ProtoMessage() {}
 
-func (x *StatusCreateRequest) ProtoReflect() protoreflect.Message {
+func (x *StatusCreateIPRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_internal_rpc_node_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1053,35 +1054,42 @@ func (x *StatusCreateRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use StatusCreateRequest.ProtoReflect.Descriptor instead.
-func (*StatusCreateRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use StatusCreateIPRequest.ProtoReflect.Descriptor instead.
+func (*StatusCreateIPRequest) Descriptor() ([]byte, []int) {
 	return file_internal_rpc_node_proto_rawDescGZIP(), []int{14}
 }
 
-func (x *StatusCreateRequest) GetHoneyIPID() uint32 {
+func (x *StatusCreateIPRequest) GetHoneyIPID() uint32 {
 	if x != nil {
 		return x.HoneyIPID
 	}
 	return 0
 }
 
-func (x *StatusCreateRequest) GetErrMsg() string {
+func (x *StatusCreateIPRequest) GetErrMsg() string {
 	if x != nil {
 		return x.ErrMsg
 	}
 	return ""
 }
 
-func (x *StatusCreateRequest) GetNetwork() string {
+func (x *StatusCreateIPRequest) GetNetwork() string {
 	if x != nil {
 		return x.Network
 	}
 	return ""
 }
 
-func (x *StatusCreateRequest) GetMac() string {
+func (x *StatusCreateIPRequest) GetMac() string {
 	if x != nil {
 		return x.Mac
+	}
+	return ""
+}
+
+func (x *StatusCreateIPRequest) GetLogID() string {
+	if x != nil {
+		return x.LogID
 	}
 	return ""
 }
@@ -1168,22 +1176,23 @@ const file_internal_rpc_node_proto_rawDesc = "" +
 	"\x05netID\x18\x06 \x01(\rR\x05netID\x12\x16\n" +
 	"\x06errMsg\x18\a \x01(\tR\x06errMsg\"\x15\n" +
 	"\x13NodeRemoveInMessage\"\x16\n" +
-	"\x14NodeRemoveOutMessage\"w\n" +
-	"\x13StatusCreateRequest\x12\x1c\n" +
+	"\x14NodeRemoveOutMessage\"\x8f\x01\n" +
+	"\x15StatusCreateIPRequest\x12\x1c\n" +
 	"\thoneyIPID\x18\x01 \x01(\rR\thoneyIPID\x12\x16\n" +
 	"\x06errMsg\x18\x02 \x01(\tR\x06errMsg\x12\x18\n" +
 	"\anetwork\x18\x03 \x01(\tR\anetwork\x12\x10\n" +
-	"\x03mac\x18\x04 \x01(\tR\x03mac*^\n" +
+	"\x03mac\x18\x04 \x01(\tR\x03mac\x12\x14\n" +
+	"\x05logID\x18\x05 \x01(\tR\x05logID*^\n" +
 	"\aCmdType\x12\x17\n" +
 	"\x13cmdNetworkFlushType\x10\x00\x12\x12\n" +
 	"\x0ecmdNetScanType\x10\x01\x12\x15\n" +
 	"\x11cmdNodeRemoveType\x10\x02\x12\x0f\n" +
-	"\vcmdPingType\x10\x032\xa0\x02\n" +
+	"\vcmdPingType\x10\x032\xa2\x02\n" +
 	"\vNodeService\x12?\n" +
 	"\bRegister\x12\x19.node_rpc.RegisterRequest\x1a\x16.node_rpc.BaseResponse\"\x00\x12G\n" +
 	"\fNodeResource\x12\x1d.node_rpc.NodeResourceRequest\x1a\x16.node_rpc.BaseResponse\"\x00\x12<\n" +
-	"\aCommand\x12\x15.node_rpc.CmdResponse\x1a\x14.node_rpc.CmdRequest\"\x00(\x010\x01\x12I\n" +
-	"\x0eStatusCreateIP\x12\x1d.node_rpc.StatusCreateRequest\x1a\x16.node_rpc.BaseResponse\"\x00B\vZ\t/node_rpcb\x06proto3"
+	"\aCommand\x12\x15.node_rpc.CmdResponse\x1a\x14.node_rpc.CmdRequest\"\x00(\x010\x01\x12K\n" +
+	"\x0eStatusCreateIP\x12\x1f.node_rpc.StatusCreateIPRequest\x1a\x16.node_rpc.BaseResponse\"\x00B\vZ\t/node_rpcb\x06proto3"
 
 var (
 	file_internal_rpc_node_proto_rawDescOnce sync.Once
@@ -1215,7 +1224,7 @@ var file_internal_rpc_node_proto_goTypes = []any{
 	(*NetScanOutMessage)(nil),      // 12: node_rpc.NetScanOutMessage
 	(*NodeRemoveInMessage)(nil),    // 13: node_rpc.NodeRemoveInMessage
 	(*NodeRemoveOutMessage)(nil),   // 14: node_rpc.NodeRemoveOutMessage
-	(*StatusCreateRequest)(nil),    // 15: node_rpc.StatusCreateRequest
+	(*StatusCreateIPRequest)(nil),  // 15: node_rpc.StatusCreateIPRequest
 }
 var file_internal_rpc_node_proto_depIdxs = []int32{
 	4,  // 0: node_rpc.RegisterRequest.systemInfo:type_name -> node_rpc.SystemInfoMessage
@@ -1234,7 +1243,7 @@ var file_internal_rpc_node_proto_depIdxs = []int32{
 	2,  // 13: node_rpc.NodeService.Register:input_type -> node_rpc.RegisterRequest
 	3,  // 14: node_rpc.NodeService.NodeResource:input_type -> node_rpc.NodeResourceRequest
 	8,  // 15: node_rpc.NodeService.Command:input_type -> node_rpc.CmdResponse
-	15, // 16: node_rpc.NodeService.StatusCreateIP:input_type -> node_rpc.StatusCreateRequest
+	15, // 16: node_rpc.NodeService.StatusCreateIP:input_type -> node_rpc.StatusCreateIPRequest
 	1,  // 17: node_rpc.NodeService.Register:output_type -> node_rpc.BaseResponse
 	1,  // 18: node_rpc.NodeService.NodeResource:output_type -> node_rpc.BaseResponse
 	7,  // 19: node_rpc.NodeService.Command:output_type -> node_rpc.CmdRequest
