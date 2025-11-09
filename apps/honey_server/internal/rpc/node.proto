@@ -12,6 +12,8 @@ service NodeService {
     rpc NodeResource(NodeResourceRequest) returns (BaseResponse) {}
     // 管理下发命令到节点运行
     rpc Command(stream CmdResponse) returns (stream CmdRequest) {}
+    // 节点上报创建ip的回调
+    rpc StatusCreateIP(StatusCreateRequest) returns (BaseResponse) {}
 }
 
 message BaseResponse {
@@ -125,3 +127,10 @@ message NodeRemoveOutMessage {
 //  string name = 1;
 //  string message = 2;
 //}
+
+message StatusCreateRequest {
+    uint32 honeyIPID = 1;
+    string errMsg    = 2;
+    string network   = 3;
+    string mac       = 4;
+}

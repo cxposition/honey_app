@@ -74,6 +74,6 @@ func register(exchangeName string, fn func(msg string) error) {
 			d.Nack(false, true) // 拒接消息, 重新入队
 			continue
 		}
-		d.Ack(false)
+		d.Ack(false) // 确认收到消息，不重新发送
 	}
 }
