@@ -9,7 +9,7 @@ type HoneyPortModel struct {
 	HoneyIpID    uint         `json:"HoneyIpID"`
 	HoneyIpModel HoneyIpModel `gorm:"foreignKey:HoneyIpID" json:"-"`
 	ServiceID    uint         `json:"serviceID"` // 服务ID
-	ServiceModel ServiceModel `json:"-"`
+	ServiceModel ServiceModel `gorm:"foreignKey:ServiceID" json:"-"`
 	Port         int          `json:"port"`     // 服务端口
 	DstIP        string       `json:"dstIP"`    // 目标IP
 	DstPort      int          `json:"distPort"` // 目标端口

@@ -6,6 +6,8 @@ import (
 	"honey_server/internal/global"
 	"honey_server/internal/middleware"
 	"honey_server/internal/models"
+	"honey_server/internal/service/grpc_service"
+	"honey_server/internal/service/mq_service"
 	"honey_server/internal/utils/res"
 )
 
@@ -23,9 +25,24 @@ func (HoneyPortApi) UpdateView(c *gin.Context) {
 	cr := middleware.GetBind[UpdateRequest](c)
 
 	var honeyIPModel models.HoneyIpModel
-	err := global.DB.Take(&honeyIPModel, cr.HoneyIPID).Error
+	err := global.DB.Preload("NodeModel").Take(&honeyIPModel, cr.HoneyIPID).Error
 	if err != nil {
 		res.FailWithMsg("不存在的诱捕ip", c)
+		return
+	}
+
+	nodeModel := honeyIPModel.NodeModel
+
+	// 判断节点是否在线
+	if nodeModel.Status != 1 {
+		res.FailWithMsg("节点未运行", c)
+		return
+	}
+
+	// 使用封装的获取节点函数
+	_, ok := grpc_service.GetNodeCommand(nodeModel.Uid)
+	if !ok {
+		res.FailWithMsg("节点离线中", c)
 		return
 	}
 
@@ -129,6 +146,22 @@ func (HoneyPortApi) UpdateView(c *gin.Context) {
 	}
 
 	msg := fmt.Sprintf("新增端口%d个，删除端口%d个", len(newPorts), len(portsToDelete))
+	var portList []models.HoneyPortModel
+	err = global.DB.Find(&portList, "honey_ip_id = ?", cr.HoneyIPID).Error
 
+	req := mq_service.BindPortRequest{
+		IP:    honeyIPModel.IP,
+		LogID: "",
+	}
+
+	for _, model := range portList {
+		req.PortList = append(req.PortList, mq_service.PortInfo{
+			IP:       honeyIPModel.IP,
+			Port:     model.Port,
+			DestIP:   model.DstIP,
+			DestPort: model.DstPort,
+		})
+	}
+	mq_service.SendBindPortMsg(nodeModel.Uid, req)
 	res.OkWithMsg(msg, c)
 }
