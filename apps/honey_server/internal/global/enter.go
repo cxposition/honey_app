@@ -13,7 +13,7 @@ var (
 	Redis  *redis.Client
 	Config *config.Config
 	Log    *logrus.Entry
-	Queue  *amqp.Channel
+	MQConn *amqp.Connection
 )
 
 var (

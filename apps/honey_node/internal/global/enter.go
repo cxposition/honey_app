@@ -17,5 +17,5 @@ var (
 	Log        *logrus.Entry
 	GrpcClient node_rpc.NodeServiceClient
 	Config     *config.Config
-	Queue      *amqp.Channel
+	Conn       *amqp.Connection
 )

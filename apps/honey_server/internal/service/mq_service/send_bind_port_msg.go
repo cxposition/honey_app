@@ -23,8 +23,13 @@ type PortInfo struct {
 func SendBindPortMsg(nodeUID string, req BindPortRequest) {
 	byteData, _ := json.Marshal(req)
 	cfg := global.Config.MQ
+	ch, err := global.MQConn.Channel()
+	if err != nil {
+		logrus.Errorf("Failed to open a channel: %v", err)
+		return
+	}
 	// 发送消息
-	err := global.Queue.Publish(cfg.BindPortExchangeName,
+	err = ch.Publish(cfg.BindPortExchangeName,
 		nodeUID,
 		false,
 		false,

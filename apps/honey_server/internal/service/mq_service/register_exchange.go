@@ -14,7 +14,11 @@ func RegisterExchange() {
 
 func exchangeDeclare(name string) {
 	// 声明交换机
-	err := global.Queue.ExchangeDeclare(
+	channel, err := global.MQConn.Channel()
+	if err != nil {
+		logrus.Fatalf("Failed to open a channel: %v", err)
+	}
+	err = channel.ExchangeDeclare(
 		name,     // 交换机名称
 		"direct", // 直接交换机类型
 		true,     // 持久化

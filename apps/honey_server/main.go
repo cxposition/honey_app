@@ -16,7 +16,7 @@ func main() {
 	core.InitIPDB()
 	global.DB = core.GetDB()
 	global.Redis = core.GetRedis()
-	global.Queue = core.InitMQ()
+	global.MQConn = core.InitMQ()
 	mq_service.RegisterExchange()
 
 	go grpc_service.Run()

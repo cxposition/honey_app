@@ -10,7 +10,7 @@ import (
 	"os"
 )
 
-func InitMQ() *amqp.Channel {
+func InitMQ() *amqp.Connection {
 	cfg := global.Config.MQ
 	var conn *amqp.Connection
 	var err error
@@ -43,9 +43,9 @@ func InitMQ() *amqp.Channel {
 	if err != nil {
 		logrus.Fatalf("Failed to connect to RabbitMQ: %v", err)
 	}
-	ch, err := conn.Channel()
-	if err != nil {
-		logrus.Fatalf("Failed to open a channel: %v", err)
-	}
-	return ch
+	//ch, err := conn.Channel()
+	//if err != nil {
+	//	logrus.Fatalf("Failed to open a channel: %v", err)
+	//}
+	return conn
 }

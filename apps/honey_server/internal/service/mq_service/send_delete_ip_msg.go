@@ -22,7 +22,13 @@ func SendDeleteIPMsg(nodeUID string, req DeleteIPRequest) {
 	byteData, _ := json.Marshal(req)
 	cfg := global.Config.MQ
 	// 发送消息
-	err := global.Queue.Publish(cfg.DeleteIpExchangeName,
+
+	ch, err := global.MQConn.Channel()
+	if err != nil {
+		logrus.Errorf("消息发送失败 %s %s", err, string(byteData))
+		return
+	}
+	err = ch.Publish(cfg.DeleteIpExchangeName,
 		nodeUID,
 		false,
 		false,

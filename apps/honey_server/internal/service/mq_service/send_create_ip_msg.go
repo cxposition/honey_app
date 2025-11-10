@@ -19,7 +19,13 @@ func SendCeateIPMsg(nodeUID string, req CreateIPRequest) {
 	byteData, _ := json.Marshal(req)
 	cfg := global.Config.MQ
 	// 发送消息
-	err := global.Queue.Publish(cfg.CreateIpExchangeName,
+
+	ch, err := global.MQConn.Channel()
+	if err != nil {
+		logrus.Errorf("创建channel失败 %s", err)
+		return
+	}
+	err = ch.Publish(cfg.CreateIpExchangeName,
 		nodeUID,
 		false,
 		false,

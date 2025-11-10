@@ -17,7 +17,12 @@ func Run() {
 
 func register(exchangeName string, fn func(msg string) error) {
 	// 声明与生产者一致的交换器（确保交换器存在）
-	err := global.Queue.ExchangeDeclare(
+	ch, err := global.Conn.Channel()
+	if err != nil {
+		logrus.Fatalf("[%s] 创建通道失败: %v", exchangeName, err)
+	}
+	defer ch.Close()
+	err = ch.ExchangeDeclare(
 		exchangeName, // 交换器名称（与生产者一致）
 		"direct",     // 交换器类型（直接交换器）
 		true,         // 持久化
@@ -32,7 +37,7 @@ func register(exchangeName string, fn func(msg string) error) {
 
 	_cfg := global.Config
 	// 为消费者创建队列并绑定
-	queue, err := global.Queue.QueueDeclare(
+	queue, err := ch.QueueDeclare(
 		fmt.Sprintf("%s_%s_queue", exchangeName, _cfg.System.Uid), // 队列名称（唯一标识，与node01绑定）
 		true,  // 持久化队列
 		false, // 不自动删除
@@ -45,7 +50,7 @@ func register(exchangeName string, fn func(msg string) error) {
 	}
 
 	// 绑定队列到交换器，绑定键为节点id
-	err = global.Queue.QueueBind(
+	err = ch.QueueBind(
 		queue.Name,      // 队列名称
 		_cfg.System.Uid, // 绑定键（与生产者路由键匹配）
 		exchangeName,    // 交换器名称
@@ -57,7 +62,7 @@ func register(exchangeName string, fn func(msg string) error) {
 	}
 
 	// 从队列接收消息
-	_megs, err := global.Queue.Consume(
+	_megs, err := ch.Consume(
 		queue.Name, // 队列名称（从哪个队列消费）
 		"",         // 消费者标识（自定义名称）
 		false,      // 关闭自动确认（手动确认消息处理完成）

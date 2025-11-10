@@ -16,6 +16,8 @@ service NodeService {
     rpc StatusCreateIP(StatusCreateIPRequest) returns (BaseResponse) {}
     // 节点上报删除ip的回调
     rpc StatusDeleteIP(StatusDeleteIPRequest) returns (BaseResponse) {}
+    // 双向流RPC，用于转发数据
+    rpc Tunnel(stream TunnelData) returns (stream TunnelData) {};
 }
 
 message BaseResponse {
@@ -140,4 +142,10 @@ message StatusCreateIPRequest {
 
 message StatusDeleteIPRequest {
     repeated uint32 honeyIPIDList = 1;
+}
+
+// 传输的数据块
+message TunnelData {
+    bytes chunk    = 1;  // 数据块
+    string address = 2;  // 目标地址
 }
