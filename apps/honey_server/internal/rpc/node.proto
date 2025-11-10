@@ -14,6 +14,8 @@ service NodeService {
     rpc Command(stream CmdResponse) returns (stream CmdRequest) {}
     // 节点上报创建ip的回调
     rpc StatusCreateIP(StatusCreateIPRequest) returns (BaseResponse) {}
+    // 节点上报删除ip的回调
+    rpc StatusDeleteIP(StatusDeleteIPRequest) returns (BaseResponse) {}
 }
 
 message BaseResponse {
@@ -134,4 +136,8 @@ message StatusCreateIPRequest {
     string network   = 3;
     string mac       = 4;
     string logID     = 5;
+}
+
+message StatusDeleteIPRequest {
+    repeated uint32 honeyIPIDList = 1;
 }
