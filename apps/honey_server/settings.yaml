@@ -16,7 +16,7 @@ redis:
   password:
   db: 1
 system:
-  webAddr: "0.0.0.0:8080"    # web的运行地址
+  webAddr: "0.0.0.0:8079"    # web的运行地址
   grpcAddr: ":8081"          # rpc的运行地址
 jwt:
   expires: 8640000
@@ -29,7 +29,7 @@ whiteList:
 mq:
   user: admin
   password: password
-  host: 192.168.177.129
+  host: 10.3.0.8
   port: 5672
   createIpExchangeName: createIpExchange
   deleteIpExchangeName: deleteIpExchange
