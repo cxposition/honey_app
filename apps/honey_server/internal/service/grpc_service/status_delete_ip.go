@@ -11,6 +11,7 @@ import (
 
 func (NodeService) StatusDeleteIP(ctx context.Context, in *node_rpc.StatusDeleteIPRequest) (pd *node_rpc.BaseResponse, err error) {
 	pd = new(node_rpc.BaseResponse)
+	logrus.Infof("StatusDeleteIP 删除诱捕ip:%v", in.HoneyIPIDList)
 	var honeyIPList []models.HoneyIpModel
 	global.DB.Find(&honeyIPList, "id in ?", in.HoneyIPIDList)
 	if len(honeyIPList) == 0 {

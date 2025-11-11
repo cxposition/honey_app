@@ -74,6 +74,7 @@ func RegisterCommand() {
 
 func runBaseCommand() {
 	if Options.DB {
+		Migrate()
 		os.Exit(0)
 	}
 	if Options.Version {

@@ -17,7 +17,7 @@ func Run() {
 
 func register(exchangeName string, fn func(msg string) error) {
 	// 声明与生产者一致的交换器（确保交换器存在）
-	ch, err := global.Conn.Channel()
+	ch, err := global.MQConn.Channel()
 	if err != nil {
 		logrus.Fatalf("[%s] 创建通道失败: %v", exchangeName, err)
 	}

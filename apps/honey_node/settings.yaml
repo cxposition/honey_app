@@ -23,3 +23,8 @@ mq:
   clientCertificate:    #客户端证书
   clientKey:            #客户端私钥
   caCertificate:        #ca证书
+db:
+  db_name: "gorm.db"
+  maxIdleConns: 2
+  maxOpenConns: 100
+  connMaxLifeTime: 10000

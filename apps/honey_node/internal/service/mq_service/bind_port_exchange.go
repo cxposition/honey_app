@@ -37,7 +37,7 @@ func BindPortExchange(msg string) error {
 		return nil
 	}
 
-	// TODO: 先把之前这个ip上的服务全部停止
+	// 先把之前这个ip上的服务全部停止
 	port_service.CloseIpTunnel(req.IP)
 
 	for _, port := range req.PortList {

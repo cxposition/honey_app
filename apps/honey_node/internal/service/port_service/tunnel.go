@@ -26,6 +26,8 @@ func Tunnel(localAddr string, targetAddr string) error {
 	logrus.Infof("目标地址: %s", targetAddr)
 	tunnelStore.Store(localAddr, listener)
 
+	// 在数据库里面记录一份
+
 	// 接受客户端连接
 	for {
 		clientConn, err := listener.Accept()
