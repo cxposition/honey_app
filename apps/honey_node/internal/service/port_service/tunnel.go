@@ -7,7 +7,11 @@ import (
 	"honey_node/internal/rpc/node_rpc"
 	"io"
 	"net"
+	"strings"
+	"sync"
 )
+
+var tunnelStore = sync.Map{}
 
 func Tunnel(localAddr string, targetAddr string) error {
 	// 创建本地监听
@@ -20,23 +24,24 @@ func Tunnel(localAddr string, targetAddr string) error {
 
 	logrus.Infof("本地监听启动，地址: %s", localAddr)
 	logrus.Infof("目标地址: %s", targetAddr)
+	tunnelStore.Store(localAddr, listener)
 
 	// 接受客户端连接
 	for {
 		clientConn, err := listener.Accept()
 		if err != nil {
+			if strings.Contains(err.Error(), "closed") {
+				break
+			}
 			logrus.Errorf("接受客户端连接失败: %v", err)
-			continue
+			break
 		}
 
 		// 为每个连接创建一个goroutine处理
-		go func() {
-			err := handleConnection(global.GrpcClient, clientConn, targetAddr)
-			if err != nil {
-				logrus.Errorf("处理连接失败: %v", err)
-			}
-		}()
+		go handleConnection(global.GrpcClient, clientConn, targetAddr)
 	}
+
+	return nil
 }
 
 func handleConnection(client node_rpc.NodeServiceClient, localConn net.Conn, targetAddr string) error {
@@ -110,4 +115,16 @@ func handleConnection(client node_rpc.NodeServiceClient, localConn net.Conn, tar
 	// 关闭流
 	_ = stream.CloseSend()
 	return nil
+}
+
+func CloseIpTunnel(ip string) {
+	tunnelStore.Range(func(key, value interface{}) bool {
+		localAddr := key.(string)
+		if strings.HasPrefix(localAddr, ip) {
+			logrus.Infof("清除%s上的全部服务", ip)
+			listener := value.(net.Listener)
+			_ = listener.Close()
+		}
+		return true
+	})
 }

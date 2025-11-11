@@ -29,7 +29,7 @@ func (p PortInfo) TargetAddr() string {
 }
 
 func BindPortExchange(msg string) error {
-	fmt.Println("绑定端口消息", msg)
+	logrus.Infof("绑定端口消息:%#v", msg)
 
 	var req BindPortRequest
 	if err := json.Unmarshal([]byte(msg), &req); err != nil {
@@ -38,15 +38,18 @@ func BindPortExchange(msg string) error {
 	}
 
 	// TODO: 先把之前这个ip上的服务全部停止
+	port_service.CloseIpTunnel(req.IP)
 
 	for _, port := range req.PortList {
 		// 起端口监听
 		go func(port PortInfo) {
 			err := port_service.Tunnel(port.LocalAddr(), port.TargetAddr())
-			fmt.Println(err)
+			if err != nil {
+				logrus.Errorf("端口绑定失败 %s", err)
+			}
 			// 如果报错，大概率是ip没有起来，也有可能是端口没有释放掉
 			// 需要通知管理，只通知失败的，成功的不通知
-			
+
 		}(port)
 	}
 
