@@ -8,6 +8,7 @@ import (
 	"honey_node/internal/service/command"
 	"honey_node/internal/service/cron_service"
 	"honey_node/internal/service/mq_service"
+	"honey_node/internal/service/port_service"
 )
 
 func main() {
@@ -31,6 +32,8 @@ func main() {
 
 	// mq交换器注册
 	mq_service.Run()
+
+	port_service.LoadTunnel()
 
 	// 阻塞主线程，防止退出
 	select {}

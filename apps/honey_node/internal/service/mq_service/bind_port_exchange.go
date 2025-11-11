@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/sirupsen/logrus"
+	"honey_node/internal/global"
+	"honey_node/internal/models"
 	"honey_node/internal/service/port_service"
 )
 
@@ -42,6 +44,15 @@ func BindPortExchange(msg string) error {
 
 	for _, port := range req.PortList {
 		// 起端口监听
+		var model []models.PortModel
+		global.DB.Find(&model, "local_addr = ?", port.LocalAddr())
+		if len(model) == 0 {
+			global.DB.Create(&models.PortModel{
+				LocalAddr:  port.LocalAddr(),
+				TargetAddr: port.TargetAddr(),
+			})
+			logrus.Infof("添加端口转发记录 %s -> %s", port.LocalAddr(), port.TargetAddr())
+		}
 		go func(port PortInfo) {
 			err := port_service.Tunnel(port.LocalAddr(), port.TargetAddr())
 			if err != nil {

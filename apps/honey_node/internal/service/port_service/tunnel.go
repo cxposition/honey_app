@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/sirupsen/logrus"
 	"honey_node/internal/global"
+	"honey_node/internal/models"
 	"honey_node/internal/rpc/node_rpc"
 	"io"
 	"net"
@@ -25,8 +26,6 @@ func Tunnel(localAddr string, targetAddr string) error {
 	logrus.Infof("本地监听启动，地址: %s", localAddr)
 	logrus.Infof("目标地址: %s", targetAddr)
 	tunnelStore.Store(localAddr, listener)
-
-	// 在数据库里面记录一份
 
 	// 接受客户端连接
 	for {
@@ -124,6 +123,12 @@ func CloseIpTunnel(ip string) {
 		localAddr := key.(string)
 		if strings.HasPrefix(localAddr, ip) {
 			logrus.Infof("清除%s上的全部服务", ip)
+			var model models.PortModel
+			global.DB.Find(&model, "local_addr = ?", localAddr)
+			if model.ID != 0 {
+				global.DB.Delete(&model)
+			}
+			logrus.Infof("关闭%s上的服务", localAddr)
 			listener := value.(net.Listener)
 			_ = listener.Close()
 		}
