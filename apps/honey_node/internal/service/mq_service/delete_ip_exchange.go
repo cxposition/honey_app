@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/sirupsen/logrus"
 	"honey_node/internal/global"
+	"honey_node/internal/models"
 	"honey_node/internal/rpc/node_rpc"
 	"honey_node/internal/utils/cmd"
 )
@@ -35,6 +36,7 @@ func DeleteIpExchange(msg string) error {
 	for _, info := range req.IpList {
 		if !info.IsTan {
 			cmd.Cmd(fmt.Sprintf("ip link del %s", info.Network))
+			linkNameList = append(linkNameList, info.Network)
 		} else {
 			logrus.Infof("这是探针%v", info)
 		}
@@ -42,7 +44,7 @@ func DeleteIpExchange(msg string) error {
 	}
 
 	if len(linkNameList) > 0 {
-		global.DB.Delete(&linkNameList)
+		global.DB.Model(&models.IpModel{}).Delete(&linkNameList)
 	}
 
 	reportDeleteIPStatus(idList)
