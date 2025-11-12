@@ -16,6 +16,7 @@ type IpInfo struct {
 	HoneyIPID uint   `json:"honeyIPID"`
 	IP        string `json:"ip"`
 	Network   string `json:"network"` // 基于哪个接口创建
+	IsTan     bool   `json:"isTan"`   // 是否是探针ip
 }
 
 func SendDeleteIPMsg(nodeUID string, req DeleteIPRequest) {

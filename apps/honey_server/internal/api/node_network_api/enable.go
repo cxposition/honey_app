@@ -15,7 +15,7 @@ import (
 
 var mu sync.Mutex
 
-func (n *NodeNetworkApi) EnableView(c *gin.Context) {
+func (n NodeNetworkApi) EnableView(c *gin.Context) {
 	cr := middleware.GetBind[models.IDRequest](c)
 	var model models.NodeNetworkModel
 	err := global.DB.Debug().Preload("NodeModel").Take(&model, cr.ID).Error

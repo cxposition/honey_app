@@ -13,7 +13,7 @@ import (
 func (HoneyIPApi) RemoveView(c *gin.Context) {
 	cr := middleware.GetBind[models.IDRequestList](c)
 	var honeyIPList []models.HoneyIpModel
-	global.DB.Preload("NodeModel").Find(&honeyIPList, "id in ?", cr.IdList)
+	global.DB.Preload("NodeModel").Preload("NetModel").Find(&honeyIPList, "id in ?", cr.IdList)
 	if len(honeyIPList) == 0 {
 		res.FailWithMsg("未找到诱捕ip", c)
 		return
@@ -38,10 +38,15 @@ func (HoneyIPApi) RemoveView(c *gin.Context) {
 		LogID: "",
 	}
 	for _, model := range honeyIPList {
+		var isTan bool
+		if model.NetModel.IP == model.IP {
+			isTan = true
+		}
 		req.IpList = append(req.IpList, mq_service.IpInfo{
 			HoneyIPID: model.ID,
 			IP:        model.IP,
 			Network:   model.Network,
+			IsTan:     isTan,
 		})
 	}
 	mq_service.SendDeleteIPMsg(nodeModel.Uid, req)

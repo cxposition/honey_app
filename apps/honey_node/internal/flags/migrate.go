@@ -9,6 +9,7 @@ import (
 func Migrate() {
 	err := global.DB.AutoMigrate(
 		&models.PortModel{},
+		&models.IpModel{},
 	)
 	if err != nil {
 		logrus.Fatalf("表结构迁移失败 %s", err)

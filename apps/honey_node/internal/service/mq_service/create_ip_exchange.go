@@ -8,6 +8,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"honey_node/internal/core"
 	"honey_node/internal/global"
+	"honey_node/internal/models"
 	"honey_node/internal/rpc/node_rpc"
 	"honey_node/internal/service/ip_service"
 	"net"
@@ -19,18 +20,21 @@ type CreateIPRequest struct {
 	Mask      int8   `json:"mask"`
 	Network   string `json:"network"` // 基于哪个接口创建
 	LogID     string `json:"logID"`   // 日志id
+	IsTan     bool   `json:"isTan"`
 }
 
 func CreateIpExchange(msg string) error {
-	//if req.IsTan {
-	//	mac, _ := ip_service.GetMACAddress(req.Network)
-	//	return reportStatus(req.HoneyIPID, req.Network, mac, "", req.LogID)
-	//}
 	log := core.GetLogger()
 	var req CreateIPRequest
 	err := json.Unmarshal([]byte(msg), &req)
 	if err != nil {
 		return nil
+	}
+
+	// 判断是否是探针ip
+	if req.IsTan {
+		mac, _ := ip_service.GetMACAddress(req.Network)
+		return reportStatus(req.HoneyIPID, req.Network, mac, "", req.LogID)
 	}
 
 	// 记录处理开始
@@ -59,13 +63,12 @@ func CreateIpExchange(msg string) error {
 	}
 
 	// 消息持久化
-	//global.DB.Create(&models.IpModel{
-	//	Ip:       req.IP,
-	//	Mask:     req.Mask,
-	//	LinkName: linkName,
-	//	Network:  req.Network,
-	//	Mac:      mac,
-	//})
+	global.DB.Create(&models.IpModel{
+		Ip:       req.IP,
+		Mask:     req.Mask,
+		LinkName: linkName,
+		Network:  req.Network,
+	})
 
 	// 所有步骤成功，上报状态
 	return reportStatus(req.HoneyIPID, linkName, mac, "", req.LogID)

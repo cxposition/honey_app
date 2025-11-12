@@ -22,7 +22,7 @@ func (NetApi) ScanView(c *gin.Context) {
 
 	var model models.NetModel
 	if err := global.DB.Preload("NodeModel").Take(&model, cr.ID).Error; err != nil {
-		res.FailWithMsg("节点不存在", c)
+		res.FailWithMsg("节点网络不存在", c)
 		return
 	}
 	if model.NodeModel.Status != 1 {

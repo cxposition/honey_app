@@ -19,6 +19,7 @@ type IpInfo struct {
 	HoneyIPID uint   `json:"honeyIPID"`
 	IP        string `json:"ip"`
 	Network   string `json:"network"` // 基于哪个接口创建
+	IsTan     bool   `json:"isTan"`
 }
 
 func DeleteIpExchange(msg string) error {
@@ -30,9 +31,18 @@ func DeleteIpExchange(msg string) error {
 	global.Log.WithFields(logrus.Fields{"req": req}).Infof("删除诱捕ip")
 
 	var idList []uint32
+	var linkNameList []string
 	for _, info := range req.IpList {
-		cmd.Cmd(fmt.Sprintf("ip link del %s", info.Network))
+		if !info.IsTan {
+			cmd.Cmd(fmt.Sprintf("ip link del %s", info.Network))
+		} else {
+			logrus.Infof("这是探针%v", info)
+		}
 		idList = append(idList, uint32(info.HoneyIPID))
+	}
+
+	if len(linkNameList) > 0 {
+		global.DB.Delete(&linkNameList)
 	}
 
 	reportDeleteIPStatus(idList)

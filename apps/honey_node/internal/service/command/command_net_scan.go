@@ -19,7 +19,6 @@ func HandleNetScan(request *node_rpc.CmdRequest, respChan chan *node_rpc.CmdResp
 
 	ipList, err := ip.ParseIPRange(req.IpRange)
 	if err != nil {
-		fmt.Println(err)
 		respChan <- &node_rpc.CmdResponse{
 			CmdType: node_rpc.CmdType_cmdNetScanType,
 			TaskID:  request.TaskID,
@@ -67,6 +66,7 @@ func HandleNetScan(request *node_rpc.CmdRequest, respChan chan *node_rpc.CmdResp
 				fmt.Printf("\n[发现设备] IP: %-15s MAC: %s RTT: %v\n", ipStr, mac, duration)
 			}
 
+			// 根据mac地址查询设备产商名称
 			manufName := core.GetVendorByMAC(mac.String())
 
 			atomic.AddInt64(&doneCount, 1)

@@ -75,12 +75,18 @@ func (HoneyIPApi) CreateView(c *gin.Context) {
 		return
 	}
 
+	var isTan bool
+	if netModel.IP == model.IP {
+		isTan = true
+	}
+
 	// 下发消息
 	mq_service.SendCeateIPMsg(netModel.NodeModel.Uid, mq_service.CreateIPRequest{
 		HoneyIPID: model.ID,
 		IP:        model.IP,
 		Mask:      netModel.Mask,
 		Network:   netModel.Network,
+		IsTan:     isTan,
 	})
 
 	res.OkWithData(model.ID, c)
