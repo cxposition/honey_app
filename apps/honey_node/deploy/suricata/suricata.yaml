@@ -1,0 +1,38 @@
+%YAML 1.1
+---
+vars:
+  address-groups:
+    HOME_NET: "[192.168.0.0/16,10.0.0.0/8,172.16.0.0/12]"
+    EXTERNAL_NET: "!$HOME_NET"
+# 日志输出目录
+default-log-dir: /var/log/suricata/
+
+outputs:
+  - eve-log:
+      enabled: yes
+      filename: eve.json  # 输出的文件名字
+      types:
+        - alert: # 主要输出告警和http
+            payload: yes
+            http-body: yes
+        - http
+
+af-packet:
+  - interface: ens10
+    cluster-id: 99
+    cluster-type: cluster_flow
+    defrag: yes
+
+app-layer:
+  protocols:
+    http:
+      enabled: yes
+
+flow:
+  memcap: 128mb
+  hash-size: 65536
+  prealloc: 10000
+
+default-rule-path: /etc/suricata/rules
+rule-files:
+  - local.rules
