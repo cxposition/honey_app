@@ -36,17 +36,19 @@ func InitMQ() *amqp.Connection {
 			InsecureSkipVerify: false,                   // 必须验证服务器证书
 		}
 		conn, err = amqp.DialTLS(cfg.Addr(), tlsConfig)
+		if err != nil {
+			logrus.Fatalf("Failed to connect to RabbitMQ: %v", err)
+		}
 	} else {
 		conn, err = amqp.Dial(cfg.Addr())
+		if err != nil {
+			logrus.Fatalf("Failed to connect to RabbitMQ: %v", err)
+		}
 	}
 
 	if err != nil {
 		logrus.Fatalf("Failed to connect to RabbitMQ: %v", err)
 	}
-	//ch, err := conn.Channel()
-	//if err != nil {
-	//	logrus.Fatalf("Failed to open a channel: %v", err)
-	//}
 	return conn
 }
 

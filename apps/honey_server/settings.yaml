@@ -29,12 +29,12 @@ whiteList:
 mq:
   user: admin
   password: password
-  host: 10.3.0.8
-  port: 5672
+  host: 111.111.111.133
+  port: 5671
   createIpExchangeName: createIpExchange
   deleteIpExchangeName: deleteIpExchange
   bindPortExchangeName: bindPortExchange
-  ssl: false
-  clientCertificate:    #客户端证书
-  clientKey:            #客户端私钥
-  caCertificate:        #ca证书
+  ssl: true
+  clientCertificate: mq_cert/client_certificate.pem #客户端证书
+  clientKey: mq_cert/client_key.pem           #客户端私钥
+  caCertificate: mq_cert/ca_certificate.pem        #ca证书

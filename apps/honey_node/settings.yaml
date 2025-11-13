@@ -3,7 +3,7 @@ logger:
   appName: honey_node
   level: info
 system:
-  grpcManageAddr: ":8081"          # rpc的运行地址
+  grpcManageAddr: "111.111.111.133:8081"          # rpc的运行地址
   network: "ens33"
   uid: "c6807dbc-e881-46d7-8408-d949333b02bb"
 #  webAddr: "127.0.0.1:8089"                    # web的运行地址
@@ -14,15 +14,15 @@ filterNetworkList:
 mq:
   user: admin
   password: password
-  host: 10.3.0.8
-  port: 5672
+  host: 111.111.111.133
+  port: 5671
   createIpExchangeName: createIpExchange
   deleteIpExchangeName: deleteIpExchange
   bindPortExchangeName: bindPortExchange
-  ssl: false
-  clientCertificate:    #客户端证书
-  clientKey:            #客户端私钥
-  caCertificate:        #ca证书
+  ssl: true
+  clientCertificate: mq_cert/client_certificate.pem #客户端证书
+  clientKey: mq_cert/client_key.pem           #客户端私钥
+  caCertificate: mq_cert/ca_certificate.pem        #ca证书
 db:
   db_name: "gorm.db"
   maxIdleConns: 2

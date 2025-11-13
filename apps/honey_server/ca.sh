@@ -16,7 +16,7 @@ keyUsage = nonRepudiation, digitalSignature, keyEncipherment
 subjectAltName = @alt_names
 
 [alt_names]
-IP.1 = 192.168.177.129
+IP.1 = 111.111.111.133
 DNS.1 = rabbitmq-server
 EOF
 
