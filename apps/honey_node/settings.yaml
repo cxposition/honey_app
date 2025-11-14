@@ -6,6 +6,7 @@ system:
   grpcManageAddr: "111.111.111.133:8081"          # rpc的运行地址
   network: "ens33"
   uid: "c6807dbc-e881-46d7-8408-d949333b02bb"
+  evePath: "deploy/suricata/logs/eve.json"
 #  webAddr: "127.0.0.1:8089"                    # web的运行地址
 filterNetworkList:
   - br-

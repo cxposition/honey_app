@@ -10,6 +10,7 @@ import (
 	"honey_node/internal/service/ip_service"
 	"honey_node/internal/service/mq_service"
 	"honey_node/internal/service/port_service"
+	"honey_node/internal/service/suricata_service"
 )
 
 func main() {
@@ -39,6 +40,9 @@ func main() {
 
 	// 启动端口服务
 	port_service.LoadTunnel()
+
+	// 启动告警监听
+	go suricata_service.Run()
 
 	// 阻塞主线程，防止退出
 	select {}
