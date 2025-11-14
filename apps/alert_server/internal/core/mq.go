@@ -1,0 +1,55 @@
+package core
+
+import (
+	"alert_server/internal/global"
+	"crypto/tls"
+	"crypto/x509"
+	"github.com/sirupsen/logrus"
+	"github.com/streadway/amqp"
+	"log"
+	"os"
+)
+
+func InitMQ() *amqp.Connection {
+	cfg := global.Config.MQ
+	var conn *amqp.Connection
+	var err error
+	if cfg.Ssl {
+		// 1. 加载客户端证书和密钥（双向认证时需要）
+		cert, err := tls.LoadX509KeyPair(cfg.ClientCertificate, cfg.ClientKey)
+		if err != nil {
+			log.Fatalf("加载客户端证书失败: %v", err)
+		}
+
+		// 2. 加载CA证书（验证服务器证书）
+		caCert, err := os.ReadFile(cfg.CaCertificate)
+		if err != nil {
+			log.Fatalf("读取CA证书失败: %v", err)
+		}
+		caCertPool := x509.NewCertPool()
+		caCertPool.AppendCertsFromPEM(caCert)
+
+		// 3. 配置TLS
+		tlsConfig := &tls.Config{
+			Certificates:       []tls.Certificate{cert}, // 客户端证书（双向认证时需要）
+			RootCAs:            caCertPool,              // 信任的CA
+			InsecureSkipVerify: false,                   // 必须验证服务器证书
+		}
+		conn, err = amqp.DialTLS(cfg.Addr(), tlsConfig)
+		if err != nil {
+			logrus.Fatalf("Failed to connect to RabbitMQ: %v", err)
+		}
+	} else {
+		conn, err = amqp.Dial(cfg.Addr())
+		if err != nil {
+			logrus.Fatalf("Failed to connect to RabbitMQ: %v", err)
+		}
+	}
+
+	if err != nil {
+		logrus.Fatalf("Failed to connect to RabbitMQ: %v", err)
+	}
+	return conn
+}
+
+func RegisterExchange() {}

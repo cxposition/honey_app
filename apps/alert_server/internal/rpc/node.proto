@@ -1,0 +1,151 @@
+syntax = "proto3";  // 指定proto版本
+package node_rpc;   // 指定默认包名
+
+// 指定golang包名
+option go_package = "/node_rpc";
+
+// 定义rpc服务
+service NodeService {
+    // 定义函数
+    rpc Register(RegisterRequest) returns (BaseResponse) {}
+    // 节点资源检测
+    rpc NodeResource(NodeResourceRequest) returns (BaseResponse) {}
+    // 管理下发命令到节点运行
+    rpc Command(stream CmdResponse) returns (stream CmdRequest) {}
+    // 节点上报创建ip的回调
+    rpc StatusCreateIP(StatusCreateIPRequest) returns (BaseResponse) {}
+    // 节点上报删除ip的回调
+    rpc StatusDeleteIP(StatusDeleteIPRequest) returns (BaseResponse) {}
+    // 双向流RPC，用于转发数据
+    rpc Tunnel(stream TunnelData) returns (stream TunnelData) {};
+}
+
+message BaseResponse {
+    int32 code = 1;
+    string msg = 2;
+}
+
+// HelloRequest 请求内容
+message RegisterRequest {
+    string ip                               = 1;
+    string mac                              = 2;
+    string node_uid                         = 3;  // 消息号
+    string version                          = 4;
+    string commit                           = 5;
+    SystemInfoMessage systemInfo            = 6;
+    ResourceMessage resourceInfo            = 7;
+    repeated NetworkInfoMessage networkList = 8;
+}
+
+message NodeResourceRequest {
+    string node_uid              = 1;  // 消息号
+    ResourceMessage resourceInfo = 2;
+}
+
+message SystemInfoMessage {
+    string hostName            = 1;
+    string distributionVersion = 2;
+    string coreVersion         = 3;
+    string systemType          = 4;
+    string startTime           = 5;
+}
+message ResourceMessage {
+    int64 cpuCount              = 1;
+    float cpuUseRate            = 2;
+    int64 memTotal              = 3;
+    float memUseRate            = 4;
+    int64 diskTotal             = 5;
+    float diskUseRate           = 6;
+    string nodePath             = 7;
+    int64 nodeResourceOccupancy = 8;
+}
+
+message NetworkInfoMessage {
+    string network = 1;
+    string ip      = 2;
+    string net     = 3;
+    int32 mask     = 4;
+}
+
+enum CmdType {
+    cmdNetworkFlushType = 0;
+    cmdNetScanType      = 1;
+    cmdNodeRemoveType   = 2;
+    cmdPingType         = 3;
+}
+
+message CmdRequest {
+    CmdType cmdType                             = 1;
+    string taskID                               = 2;
+    NetworkFlushInMessage NetworkFlushInMessage = 3;
+    NetScanInMessage NetScanInMessage           = 4;
+    NodeRemoveInMessage NodeRemoveInMessage     = 5;
+}
+
+message CmdResponse {
+    CmdType cmdType                               = 1;
+    string taskID                                 = 2;
+    string nodeID                                 = 3;
+    int32 code                                    = 4;
+    string errorMsg                               = 5;
+    NetworkFlushOutMessage NetworkFlushOutMessage = 6;
+    NetScanOutMessage NetScanOutMessage           = 7;
+    NodeRemoveOutMessage NodeRemoveOutMessage     = 8;
+}
+
+message NetworkFlushInMessage {
+    repeated string filterNetworkName = 1;
+}
+
+message NetworkFlushOutMessage {
+    repeated NetworkInfoMessage networkList = 1;
+}
+
+message NetScanInMessage {
+    string network               = 1;  // 使用哪一个网卡进行arp探测
+    string ipRange               = 2;  // 需要扫描的ip列表
+    repeated string filterIPList = 3;  // 不需要扫描的ip列表
+    uint32 netID                 = 4;  // 网络id
+}
+
+message NetScanOutMessage {
+    bool end       = 1;  // 是否结束
+    float progress = 2;  // 扫描进度
+    string ip      = 3;  // mac
+    string mac     = 4;  // ip
+    string manuf   = 5;  // mac对应的厂商
+    uint32 netID   = 6;  // 网络id
+    string errMsg  = 7;  // 错误信息
+}
+
+message NodeRemoveInMessage {
+}
+
+message NodeRemoveOutMessage {
+}
+
+// protoc --go_out=. --go-grpc_out=. *.proto
+
+// HelloResponse 响应内容
+//message RegisterResponse {
+//  string name = 1;
+//  string message = 2;
+//}
+
+message StatusCreateIPRequest {
+    uint32 honeyIPID = 1;
+    string errMsg    = 2;
+    string network   = 3;
+    string mac       = 4;
+    string logID     = 5;
+}
+
+message StatusDeleteIPRequest {
+    repeated uint32 honeyIPIDList = 1;
+}
+
+// 传输的数据块
+message TunnelData {
+    bytes chunk    = 1;  // 数据块
+    string address = 2;  // 目标地址
+}

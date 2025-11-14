@@ -18,6 +18,20 @@ services:
     networks:
       mq_network:
         ipv4_address: 10.3.0.8
+  es:
+    image: "elasticsearch:7.12.0"
+    restart: always
+    privileged: true
+    environment:
+      discovery.type: "single-node"
+      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+    volumes:
+      - ./es/data:/usr/share/elasticsearch/data
+    networks:
+      mq_network:
+        ipv4_address: 10.3.0.7
 networks:
   mq_network:
     driver: bridge
