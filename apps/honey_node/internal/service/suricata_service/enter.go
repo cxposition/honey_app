@@ -5,7 +5,10 @@ import (
 	"github.com/hpcloud/tail"
 	"github.com/sirupsen/logrus"
 	"honey_node/internal/global"
+	"honey_node/internal/service/mq_service"
 	"io"
+	"strconv"
+	"time"
 )
 
 type AlertType struct {
@@ -74,6 +77,8 @@ func Run() {
 		logrus.Fatalf("suricata路径错误: %s", err)
 	}
 
+	uid := global.Config.System.Uid
+
 	logrus.Infof("开始监听suricata告警日志")
 	for line := range t.Lines {
 		var t AlertType
@@ -87,5 +92,45 @@ func Run() {
 		}
 		logrus.Infof("%s %s => %s:%d", t.Alert.Signature, t.SrcIp, t.DestIp, t.DestPort)
 		// 发送到mq
+
+		var level int8
+		levelList := t.Alert.Metadata.Level
+		if len(levelList) > 0 {
+			if len(levelList) > 1 {
+				logrus.Infof("存在level多个的情况 %v", levelList)
+			}
+			l, err := strconv.Atoi(levelList[0])
+			if err != nil {
+				logrus.Errorf("level转换失败 %s", err)
+				level = 1
+			} else {
+				level = int8(l)
+			}
+		}
+
+		// 指定输入时间字符串的格式
+		layout := "2006-01-02T15:04:05.999999Z0700"
+		// 解析时间字符串
+		ti, err := time.Parse(layout, t.Timestamp)
+		if err != nil {
+			logrus.Errorf("解析时间时出错: %s", err)
+			return
+		}
+
+		// 指定输出时间的格式
+		timeStamp := ti.Format(time.DateTime)
+
+		mq_service.SendAlertMsg(mq_service.AlertMsgType{
+			NodeUid:          uid,
+			SrcIp:            t.SrcIp,
+			SrcPort:          t.SrcPort,
+			DestIP:           t.DestIp,
+			DestPort:         t.DestPort,
+			Signature:        t.Alert.Signature,
+			HttpResponseBody: t.Http.HttpResponseBody,
+			Payload:          t.Payload,
+			Timestamp:        timeStamp,
+			Level:            level,
+		})
 	}
 }

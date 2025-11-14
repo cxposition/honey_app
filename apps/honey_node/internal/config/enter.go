@@ -52,6 +52,7 @@ type MQ struct {
 	ClientCertificate    string `yaml:"clientCertificate"`
 	ClientKey            string `yaml:"clientKey"`
 	CaCertificate        string `yaml:"caCertificate"`
+	AlertTopic           string `yaml:"alertTopic"`
 }
 
 func (m MQ) Addr() string {
