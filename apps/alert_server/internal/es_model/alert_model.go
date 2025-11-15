@@ -6,6 +6,7 @@ import (
 )
 
 type AlertModel struct {
+	ID               string `json:"id"`
 	NodeUid          string `json:"nodeUid"`
 	SrcIp            string `json:"srcIp"`
 	SrcPort          int    `json:"srcPort"`
@@ -16,6 +17,8 @@ type AlertModel struct {
 	Level            int8   `json:"level"` // 告警级别
 	HttpResponseBody string `json:"httpResponseBody"`
 	Payload          string `json:"payload"`
+	ServiceID        uint   `json:"serviceID"`
+	ServiceName      string `json:"serviceName"`
 }
 
 func (alert AlertModel) Index() string {
