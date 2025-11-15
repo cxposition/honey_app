@@ -11,8 +11,9 @@ import (
 
 func (WhiteIPApi) RemoveView(c *gin.Context) {
 	cr := middleware.GetBind[models.IDRequestList](c)
-	successCount, err := common_service.Remove(models.WhiteIPModel{}, common_service.RemoveRequest{
+	successCount, err := common_service.Remove(&models.WhiteIPModel{}, common_service.RemoveRequest{
 		IDList: cr.IdList,
+		Log:    middleware.GetLog(c),
 		Msg:    "白名单",
 	})
 	if err != nil {
