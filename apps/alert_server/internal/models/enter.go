@@ -17,3 +17,11 @@ type PageInfo struct {
 	Limit int    `form:"limit"`
 	Key   string `form:"key"`
 }
+
+type IDRequest struct {
+	ID uint `json:"id" uri:"id" form:"id"`
+}
+
+type IDRequestList struct {
+	IdList []uint `json:"idList" uri:"idList" form:"idList"`
+}

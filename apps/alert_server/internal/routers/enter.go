@@ -11,7 +11,7 @@ func Run() {
 	r.Static("uploads", "uploads")
 	g := r.Group("alert_server")
 	g.Use(middleware.LogMiddleware, middleware.AuthMiddleware)
-
+	WhiteIPRouter(g)
 	webAddr := global.Config.System.WebAddr
 	r.Run(webAddr)
 }

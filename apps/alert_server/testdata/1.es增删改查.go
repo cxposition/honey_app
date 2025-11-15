@@ -61,11 +61,11 @@ func list() {
 
 func remove() {
 	deleteResponse, err := global.ES.
-		Delete(). // 调用删除接口
+		Delete().                             // 调用删除接口
 		Index(es_model.AlertModel{}.Index()). // 指定索引
-		Id("SutShZoB5MOH293S1wOZ"). // 指定id
-		Refresh("true"). // 是否立即生效
-		Do(context.Background()) // 执行
+		Id("SutShZoB5MOH293S1wOZ").           // 指定id
+		Refresh("true").                      // 是否立即生效
+		Do(context.Background())              // 执行
 	if err != nil {
 		logrus.Errorf("es数据删除失败 %s", err)
 		return
