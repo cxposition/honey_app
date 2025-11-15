@@ -12,6 +12,7 @@ type FlagOptions struct {
 	File    string
 	Version bool
 	DB      bool
+	ES      bool
 	Menu    string
 	Type    string
 	Value   string
@@ -36,6 +37,7 @@ func init() {
 	flag.BoolVar(&Options.Version, "vv", false, "打印当前版本")
 	flag.BoolVar(&Options.Help, "h", false, "帮助信息")
 	flag.BoolVar(&Options.DB, "db", false, "迁移表结构")
+	flag.BoolVar(&Options.ES, "es", false, "创建es索引")
 	flag.StringVar(&Options.Menu, "m", "", "菜单 user")
 	flag.StringVar(&Options.Type, "t", "", "类型 create list")
 	flag.StringVar(&Options.Value, "v", "", "值")
@@ -75,6 +77,10 @@ func RegisterCommand() {
 func runBaseCommand() {
 	if Options.DB {
 		Migrate()
+		os.Exit(0)
+	}
+	if Options.ES {
+		ESIndex()
 		os.Exit(0)
 	}
 	if Options.Version {

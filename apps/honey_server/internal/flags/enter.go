@@ -75,7 +75,7 @@ func RegisterCommand() {
 func runBaseCommand() {
 	if Options.DB {
 		Migrate()
-		os.Exit(0)
+		os.Exit(0) // 退出是不让走routers.Run()
 	}
 	if Options.Version {
 		logrus.Infof("当前版本: %s commit: %s buildTime: %s",

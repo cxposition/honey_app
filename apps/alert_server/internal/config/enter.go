@@ -11,6 +11,7 @@ type Config struct {
 	WhiteList []string `yaml:"whiteList"`
 	MQ        MQ       `yaml:"mq"`
 	ES        ES       `yaml:"es"`
+	Alert     Alert    `yaml:"alert"`
 }
 
 type ES struct {
@@ -90,4 +91,8 @@ func (m MQ) Addr() string {
 		m.Host,
 		m.Port,
 	)
+}
+
+type Alert struct {
+	AlertIndex string `yaml:"alertIndex"`
 }

@@ -42,3 +42,6 @@ es:
   addr: http://111.111.111.133:9200
   userName:
   password:
+
+alert:
+  alertIndex: alert_index
