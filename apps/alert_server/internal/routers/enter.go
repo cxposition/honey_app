@@ -13,6 +13,7 @@ func Run() {
 	//g.Use(middleware.LogMiddleware, middleware.AuthMiddleware)
 	g.Use(middleware.LogMiddleware)
 	WhiteIPRouter(g)
+	AlertRouter(g)
 	webAddr := global.Config.System.WebAddr
 	r.Run(webAddr)
 }
