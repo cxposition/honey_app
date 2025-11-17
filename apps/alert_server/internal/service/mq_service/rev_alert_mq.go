@@ -1,8 +1,11 @@
 package mq_service
 
 import (
+	"alert_server/internal/es_model"
 	"alert_server/internal/global"
-	"fmt"
+	"alert_server/internal/models"
+	"context"
+	"encoding/json"
 	"github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
 )
@@ -18,6 +21,35 @@ func RevAlertMQ(ch *amqp.Channel) {
 	}
 
 	for d := range msgs {
-		fmt.Printf("接收到消息 %s", d.Body)
+		var data es_model.AlertModel
+		err = json.Unmarshal(d.Body, &data)
+		if err != nil {
+			logrus.Errorf("消息格式解析失败 %s %s", err, d.Body)
+			continue
+		}
+
+		logrus.Infof("%s %s => %s:%d", data.Signature, data.SrcIp, data.DestIP, data.DestPort)
+		// 查ip是否在白名单中
+		var whiteModel models.WhiteIPModel
+		global.DB.Find(&whiteModel, "ip = ?", data.SrcIp)
+		if whiteModel.ID != 0 {
+			logrus.Warnf("告警消息 在白名单中")
+			continue
+		}
+
+		// 查虚拟服务
+		var hpModel models.HoneyPortModel
+		err = global.DB.Preload("ServiceModel").Take(&hpModel, "ip = ? and port = ?", data.DestIP, data.DestPort).Error
+		if err == nil {
+			data.ServiceID = hpModel.ServiceID
+			data.ServiceName = hpModel.ServiceModel.Title
+		}
+		response, err := global.ES.Index().Index(data.Index()).BodyJson(data).Do(context.Background())
+		if err != nil {
+			logrus.Errorf("告警消息入库失败 %s %s", err, d.Body)
+			continue
+		}
+		logrus.Infof("告警消息入库成功 %s", response.Id)
+
 	}
 }

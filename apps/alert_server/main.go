@@ -17,7 +17,7 @@ func main() {
 	global.Redis = core.GetRedis()
 	global.MQConn = core.InitMQ()
 	global.ES = core.InitES()
-	go mq_service.Run()
+	mq_service.Run()
 
 	flags.Run()
 	routers.Run()

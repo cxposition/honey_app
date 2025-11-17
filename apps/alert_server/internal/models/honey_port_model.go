@@ -3,11 +3,8 @@ package models
 type HoneyPortModel struct {
 	Model
 	NodeID       uint         `json:"nodeID"`
-	NodeModel    NodeModel    `gorm:"foreignKey:NodeID" json:"-"`
 	NetID        uint         `json:"netID"`
-	NetModel     NetModel     `gorm:"foreignKey:NetID" json:"-"`
 	HoneyIpID    uint         `json:"HoneyIpID"`
-	HoneyIpModel HoneyIpModel `gorm:"foreignKey:HoneyIpID" json:"-"`
 	ServiceID    uint         `json:"serviceID"` // 服务ID
 	ServiceModel ServiceModel `gorm:"foreignKey:ServiceID" json:"-"`
 	IP           string       `gorm:"size:32" json:"ip"`

@@ -18,5 +18,4 @@ func Run() {
 	}
 
 	go RevAlertMQ(ch)
-
 }

@@ -121,16 +121,16 @@ func Run() {
 		timeStamp := ti.Format(time.DateTime)
 
 		mq_service.SendAlertMsg(mq_service.AlertMsgType{
-			NodeUid:          uid,
-			SrcIp:            t.SrcIp,
-			SrcPort:          t.SrcPort,
-			DestIP:           t.DestIp,
-			DestPort:         t.DestPort,
-			Signature:        t.Alert.Signature,
-			HttpResponseBody: t.Http.HttpResponseBody,
-			Payload:          t.Payload,
-			Timestamp:        timeStamp,
-			Level:            level,
+			NodeUid:   uid,
+			SrcIp:     t.SrcIp,
+			SrcPort:   t.SrcPort,
+			DestIP:    t.DestIp,
+			DestPort:  t.DestPort,
+			Signature: t.Alert.Signature,
+			Body:      t.Http.HttpResponseBody,
+			Payload:   t.Payload,
+			Timestamp: timeStamp,
+			Level:     level,
 		})
 	}
 }
