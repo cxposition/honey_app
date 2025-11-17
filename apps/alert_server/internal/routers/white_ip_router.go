@@ -9,7 +9,7 @@ import (
 )
 
 func WhiteIPRouter(r *gin.RouterGroup) {
-	app := api.Api{}.WhiteIPApi
+	app := api.App.WhiteIPApi
 	r.GET("white_ip", middleware.BindQueryMiddleware[models.PageInfo], app.ListView)
 	r.POST("white_ip", middleware.BindJsonMiddleware[white_ip_api.CreateRequest], app.CreateView)
 	r.PUT("white_ip", middleware.BindJsonMiddleware[white_ip_api.UpdateRequest], app.UpdateView)

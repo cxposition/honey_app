@@ -10,6 +10,7 @@ type AlertModel struct {
 	NodeUid          string `json:"nodeUid"`
 	SrcIp            string `json:"srcIp"`
 	SrcPort          int    `json:"srcPort"`
+	Addr             string `json:"addr"`
 	DestIP           string `json:"destIP"`
 	DestPort         int    `json:"destPort"`
 	Timestamp        string `json:"timestamp"` // 年月日，时分秒的时间

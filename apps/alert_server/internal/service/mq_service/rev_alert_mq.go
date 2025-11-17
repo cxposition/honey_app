@@ -1,6 +1,7 @@
 package mq_service
 
 import (
+	"alert_server/internal/core"
 	"alert_server/internal/es_model"
 	"alert_server/internal/global"
 	"alert_server/internal/models"
@@ -39,11 +40,15 @@ func RevAlertMQ(ch *amqp.Channel) {
 
 		// 查虚拟服务
 		var hpModel models.HoneyPortModel
-		err = global.DB.Preload("ServiceModel").Take(&hpModel, "ip = ? and port = ?", data.DestIP, data.DestPort).Error
-		if err == nil {
+		global.DB.Preload("ServiceModel").Find(&hpModel, "ip = ? and port = ?", data.DestIP, data.DestPort)
+		if hpModel.ID != 0 {
 			data.ServiceID = hpModel.ServiceID
 			data.ServiceName = hpModel.ServiceModel.Title
 		}
+
+		addr := core.GetIpAddr(data.SrcIp)
+		data.Addr = addr
+
 		response, err := global.ES.Index().Index(data.Index()).BodyJson(data).Do(context.Background())
 		if err != nil {
 			logrus.Errorf("告警消息入库失败 %s %s", err, d.Body)
