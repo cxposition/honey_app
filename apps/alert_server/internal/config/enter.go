@@ -63,17 +63,14 @@ type Jwt struct {
 }
 
 type MQ struct {
-	User                 string `yaml:"user"`
-	Password             string `yaml:"password"`
-	Host                 string `yaml:"host"`
-	Port                 int    `yaml:"port"`
-	CreateIpExchangeName string `yaml:"createIpExchangeName"`
-	DeleteIpExchangeName string `yaml:"deleteIpExchangeName"`
-	BindPortExchangeName string `yaml:"bindPortExchangeName"`
-	Ssl                  bool   `yaml:"ssl"`
-	ClientCertificate    string `yaml:"clientCertificate"`
-	ClientKey            string `yaml:"clientKey"`
-	CaCertificate        string `yaml:"caCertificate"`
+	User              string `yaml:"user"`
+	Password          string `yaml:"password"`
+	Host              string `yaml:"host"`
+	Port              int    `yaml:"port"`
+	Ssl               bool   `yaml:"ssl"`
+	ClientCertificate string `yaml:"clientCertificate"`
+	ClientKey         string `yaml:"clientKey"`
+	CaCertificate     string `yaml:"caCertificate"`
 }
 
 func (m MQ) Addr() string {
@@ -95,4 +92,5 @@ func (m MQ) Addr() string {
 
 type Alert struct {
 	AlertIndex string `yaml:"alertIndex"`
+	AlertTopic string `yaml:"alertTopic"`
 }

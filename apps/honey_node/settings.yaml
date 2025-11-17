@@ -24,6 +24,7 @@ mq:
   clientCertificate: mq_cert/client_certificate.pem #客户端证书
   clientKey: mq_cert/client_key.pem           #客户端私钥
   caCertificate: mq_cert/ca_certificate.pem        #ca证书
+  alertTopic: alert_topic
 db:
   db_name: "gorm.db"
   maxIdleConns: 2
