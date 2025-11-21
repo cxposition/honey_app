@@ -45,7 +45,7 @@ func (NodeService) Command(stream node_rpc.NodeService_CommandServer) error {
 	}
 
 	NodeCommandMap.Store(nodeID, cmd)
-	logrus.Infof("节点 %s 已连接", nodeID)
+	logrus.Errorf("节点 %s 已连接", nodeID)
 
 	// 异步发送循环
 	go func(c *Command) {
@@ -65,7 +65,7 @@ func (NodeService) Command(stream node_rpc.NodeService_CommandServer) error {
 	// 接收循环
 	for {
 		resp, err := stream.Recv()
-		logrus.Infof("节点 %s 接收到命令: %+v", nodeID, resp)
+		//logrus.Infof("节点 %s 接收到命令: %+v", nodeID, resp)
 		if err == io.EOF {
 			break
 		}
@@ -79,13 +79,14 @@ func (NodeService) Command(stream node_rpc.NodeService_CommandServer) error {
 			ch := chVal.(chan *node_rpc.CmdResponse)
 			select {
 			case ch <- resp: // 匹配好结果后将结果发送到对应通道,相当于向respChan中发消息
-				logrus.Infof("节点 %s 的 task %s 响应已发送", nodeID, resp.TaskID)
+				//logrus.Infof("节点 %s 的 task %s 响应已发送", nodeID, resp.TaskID)
 			case <-ctx.Done():
-				//default:
-				//	logrus.Warnf("节点 %s 的 task %s 响应通道已满", nodeID, resp.TaskID)
+				// default:
+				// logrus.Warnf("节点 %s 的 task %s 响应通道已满", nodeID, resp.TaskID)
 			}
 		} else {
-			logrus.Warnf("节点 %s 收到未知 taskID=%s 的响应", nodeID, resp.TaskID)
+			// cmdType为3就是心跳类型
+			logrus.Warnf("节点 %s 收到未知 taskID=%s 的响应, 任务类型%v", nodeID, resp.TaskID, resp.CmdType)
 		}
 	}
 

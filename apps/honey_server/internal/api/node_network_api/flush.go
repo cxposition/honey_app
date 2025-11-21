@@ -88,7 +88,6 @@ func (NodeNetworkApi) FlushView(c *gin.Context) {
 		oldMap[key] = old
 	}
 
-	// 7️⃣ 遍历节点新网卡信息 -> 同步数据库
 	for _, n := range filteredList {
 		key := fmt.Sprintf("%s_%s", n.Network, n.Ip)
 		old, exists := oldMap[key]
@@ -110,7 +109,6 @@ func (NodeNetworkApi) FlushView(c *gin.Context) {
 			continue
 		}
 
-		// 🟡 存在但信息有变化，更新
 		if old.Mask != int8(n.Mask) {
 			if err := global.DB.Model(&old).Update("mask", int8(n.Mask)).Error; err != nil {
 				logrus.Errorf("更新网卡失败 %s: %v", n.Network, err)
