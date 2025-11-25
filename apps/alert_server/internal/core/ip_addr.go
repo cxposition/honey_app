@@ -2,10 +2,10 @@ package core
 
 import (
 	"alert_server/internal/global"
-	"alert_server/internal/utils/ip"
 	_ "embed"
 	"fmt"
 	"github.com/lionsoul2014/ip2region/binding/golang/xdb"
+	"net"
 	"strings"
 )
 
@@ -24,7 +24,7 @@ func InitIPDB() {
 }
 
 func GetIpAddr(_ip string) (addr string) {
-	if ip.HasLocalIPAddr(_ip) {
+	if IsPrivateIP(_ip) {
 		return "内网"
 	}
 
@@ -55,4 +55,25 @@ func GetIpAddr(_ip string) (addr string) {
 		return country
 	}
 	return region
+}
+
+func IsPrivateIP(ipStr string) bool {
+	ip := net.ParseIP(ipStr)
+	if ip == nil {
+		return false
+	}
+
+	privateCIDRs := []string{
+		"10.0.0.0/8",
+		"172.16.0.0/12",
+		"192.168.0.0/16",
+	}
+
+	for _, block := range privateCIDRs {
+		_, cidr, _ := net.ParseCIDR(block)
+		if cidr.Contains(ip) {
+			return true
+		}
+	}
+	return false
 }
