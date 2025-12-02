@@ -1,6 +1,7 @@
 package routers
 
 import (
+	ginpprof "github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
 	"honey_server/internal/global"
 	"honey_server/internal/middleware"
@@ -23,5 +24,6 @@ func Run() {
 	HoneyPortRouters(g)
 
 	webAddr := global.Config.System.WebAddr
+	go ginpprof.Register(r)
 	r.Run(webAddr)
 }

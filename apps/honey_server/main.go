@@ -7,6 +7,7 @@ import (
 	"honey_server/internal/routers"
 	"honey_server/internal/service/grpc_service"
 	"honey_server/internal/service/mq_service"
+	_ "net/http/pprof"
 )
 
 func main() {
