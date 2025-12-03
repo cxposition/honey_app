@@ -3,6 +3,7 @@ package routers
 import (
 	"alert_server/internal/global"
 	"alert_server/internal/middleware"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -14,6 +15,7 @@ func Run() {
 	g.Use(middleware.LogMiddleware)
 	WhiteIPRouter(g)
 	AlertRouter(g)
+	IndexRouter(g)
 	webAddr := global.Config.System.WebAddr
 	r.Run(webAddr)
 }
